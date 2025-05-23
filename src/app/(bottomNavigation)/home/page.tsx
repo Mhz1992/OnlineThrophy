@@ -4,8 +4,8 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { ArrowLIcon, BookOpenIcon, NotificationIcon } from "@/features/common/assets/svg";
+import { Card,CardHeader, CardTitle } from '@/components/ui/card';
+import {ArrowLeftIcon, ArrowLIcon, BookOpenIcon, NotificationIcon} from "@/features/common/assets/svg";
 import { SessionCard } from "@/features/sessions/cards";
 import { NotificationDrawer } from "@/features/drawers/NotificationDrawer";
 import { SessionListSkeleton } from '@/features/skeleton/SessionListSkeleton';
@@ -33,7 +33,6 @@ export default function Page() {
     });
 
     const userName = data?.userName || "کاربر";
-    const MOCK_UNFINISHED_EXAM = data?.unfinishedExam;
     const MOCK_SESSIONS = data?.sessions || [];
 
     if (isError) {
@@ -71,17 +70,17 @@ export default function Page() {
                                 <Skeleton className="w-full h-4" />
                             </CardHeader>
                         </Card>
-                    ) :  MOCK_UNFINISHED_EXAM && (
+                    ) :  (
                         <Card className="w-full rounded-[20px] relative overflow-hidden -top-16 bg-[#F2FAFF]">
                             <CardHeader>
                                 <CardTitle className="w-full">
                                     <Link
-                                        href={`/exams/${MOCK_UNFINISHED_EXAM.slug}`}
+                                        href={`/exams/math-chapter-1`}
                                         className="flex items-center justify-between w-full"
                                         passHref
                                     >
                                         <span>شروع آزمون اصلی</span>
-                                        <ArrowLIcon height={12} width={12} className="text-gray-500" />
+                                        <ArrowLeftIcon height={12} width={12} className="text-black" />
                                     </Link>
                                 </CardTitle>
                             </CardHeader>
