@@ -70,7 +70,15 @@ export default function RootLayout({
     return (
         <html lang="fa" className={`${dana.variable} ss02 h-full text-foreground `} suppressHydrationWarning>
         <body className="h-full">
-        <div dir="rtl" className="h-full bg-gray-100 dark:bg-gray-900 px-6 min-h-screen pb-16">
+        {/*
+            The main content wrapper.
+            - h-full: Ensures it takes 100% height of its parent (body), which is 100% of viewport.
+            - overflow-y-auto: Makes this div scrollable if its content exceeds its height,
+              preventing the entire body from scrolling.
+            - Removed min-h-screen: This was causing the div to potentially exceed viewport height.
+            - pb-16: Retained for bottom padding, likely for the bottom navigation bar.
+        */}
+        <div dir="rtl" className="h-full bg-gray-100 dark:bg-gray-900 px-6 pb-16 overflow-y-auto">
             <Providers>
                 {children}
             </Providers>
