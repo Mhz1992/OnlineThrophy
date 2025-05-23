@@ -13,7 +13,7 @@ import { Exam, TrophySession } from '@/types/api';
 import {Skeleton} from "@/components/skeleton";
 
 interface HomeData {
-    unfinishedExam: Exam;
+    unfinishedExam: Exam | null; // Allow null for unfinishedExam
     sessions: TrophySession[];
     userName: string;
 }
@@ -28,11 +28,17 @@ export default function Page() {
             if (!response.ok) {
                 throw new Error('Failed to fetch home data');
             }
-            return response.json();
+            const result = await response.json();
+            // Ensure unfinishedExam is null if not present or if hasUnfinishedExam is false
+            return {
+                ...result,
+                unfinishedExam: result.hasUnfinishedExam ? result.unfinishedExam : null
+            };
         },
     });
 
     const userName = data?.userName || "کاربر";
+    const MOCK_UNFINISHED_EXAM = data?.unfinishedExam; // Now correctly reflects null if no exam
     const MOCK_SESSIONS = data?.sessions || [];
 
     if (isError) {
@@ -70,12 +76,12 @@ export default function Page() {
                                 <Skeleton className="w-full h-4" />
                             </CardHeader>
                         </Card>
-                    ) :  (
+                    ) :  MOCK_UNFINISHED_EXAM && ( // Conditionally render based on MOCK_UNFINISHED_EXAM
                         <Card className="w-full rounded-[20px] relative overflow-hidden -top-16 bg-[#F2FAFF]">
                             <CardHeader>
                                 <CardTitle className="w-full">
                                     <Link
-                                        href={`/exams/math-chapter-1`}
+                                        href={`/exams/${MOCK_UNFINISHED_EXAM.slug}`} // Use dynamic slug
                                         className="flex items-center justify-between w-full"
                                         passHref
                                     >
