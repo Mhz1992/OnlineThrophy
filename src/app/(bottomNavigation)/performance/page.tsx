@@ -6,8 +6,6 @@ import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/skeleton';
 import { PerformanceApiResponse } from '@/types/api';
 import { PerformanceCard } from '@/features/performance/components/PerformanceCard';
-
-// Chart.js imports
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -21,10 +19,9 @@ import {
     ScriptableContext, // Import ScriptableContext
     Scale, // Import Scale for the callback type
     CoreScaleOptions, // Import CoreScaleOptions for the callback type
-    // Tick // Tick is no longer needed if 'ticks' parameter is removed
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
-import localFont from "next/font/local";
+import {danaFont} from "@/lib/utils";
 
 // Register Chart.js components
 ChartJS.register(
@@ -37,11 +34,6 @@ ChartJS.register(
     Legend
 );
 
-const dana = localFont({
-    src: '../../fonts/DanaVF.woff2',
-    variable: '--font-yekan-sans',
-    weight: '100 900',
-});
 // Hardcoded color values based on common theme defaults
 const PRIMARY_COLOR = '#1F95EB';
 const FOREGROUND_COLOR = '#020817';
@@ -49,8 +41,8 @@ const BACKGROUND_COLOR = '#FFFFFF';
 const BORDER_COLOR = '#E2E8F0';
 
 // Set global font and color for Chart.js
-if (ChartJS.defaults.font.family !== dana.style.fontFamily) {
-    ChartJS.defaults.font.family = dana.style.fontFamily;
+if (ChartJS.defaults.font.family !== danaFont.style.fontFamily) {
+    ChartJS.defaults.font.family = danaFont.style.fontFamily;
 }
 ChartJS.defaults.color = FOREGROUND_COLOR; // Default text color for chart elements
 

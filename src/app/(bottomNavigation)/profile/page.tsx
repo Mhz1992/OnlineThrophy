@@ -74,14 +74,14 @@ export default function ProfilePage() {
     return (
         <div className="flex flex-col h-full bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between ">
             {/* Header Section - Top */}
-            <div className="text-right w-full max-w-md mx-auto mt-8">
+            <div className="text-right w-full mx-auto mt-8">
                 <h1 className="text-2xl font-semibold">حساب کاربری</h1>
                 <p className="text-muted-foreground mt-2">مدیریت اطلاعات و تنظیمات حساب کاربری شما.</p>
             </div>
 
             {/* Options Section - Middle, takes available space */}
             {/* Removed space-y-4 from this parent div */}
-            <div className="flex-grow flex flex-col items-center justify-start w-full max-w-md mx-auto mt-8">
+            <div className="flex-grow flex flex-col items-center justify-start w-full  mx-auto mt-8">
                 {/* Edit Profile */}
                 <Link href="/profile/edit" className="w-full">
                     <div className={cn(

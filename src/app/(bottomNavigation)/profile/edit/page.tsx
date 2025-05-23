@@ -100,13 +100,13 @@ export default function EditProfilePage() {
     return (
         <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
             {/* Header Section - Top */}
-            <div className="text-right w-full max-w-md mx-auto mt-8">
+            <div className="text-right w-full  mx-auto mt-8">
                 <h1 className="text-2xl font-semibold">ویرایش پروفایل</h1>
                 <p className="text-muted-foreground mt-2">اطلاعات کاربری خود را ویرایش کنید.</p>
             </div>
 
             {/* Form Content Section - Middle, takes available space */}
-            <div className="flex-grow flex flex-col items-center justify-center w-full max-w-md mx-auto">
+            <div className="flex-grow flex flex-col items-center justify-center w-full  mx-auto">
                 <div className="w-full">
                     <form id="edit-profile-form" onSubmit={handleSubmit} className="space-y-4">
                         <div>

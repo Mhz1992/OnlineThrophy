@@ -1,7 +1,6 @@
 'use client';
 
 import Link from 'next/link';
-// Removed unused Image import
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { cn } from '@/src/lib/utils';
@@ -41,7 +40,7 @@ export const BottomNavigationBar: React.FC = () => {
     ];
 
     return (
-        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border shadow-lg md:hidden">
+        <nav className="fixed bottom-0 left-0 right-0 z-50 bg-background border-t border-border shadow-lg max-w-3xl mx-auto">
             <div className="flex h-full mt-1 items-center justify-around">
                 {[...navItems].reverse().map((item) => ( // Reverse the order here
                     <NavItem

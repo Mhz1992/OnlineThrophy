@@ -114,12 +114,12 @@ export default function ChangePasswordPage() {
 
     return (
         <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
-            <div className="text-right w-full max-w-md mx-auto mt-8">
+            <div className="text-right w-full mx-auto mt-8">
                 <h1 className="text-2xl font-semibold">تغییر رمز عبور</h1>
                 <p className="text-muted-foreground mt-2">این صفحه برای تغییر رمز عبور حساب کاربری شماست.</p>
             </div>
 
-            <div className="flex-grow flex items-center justify-center w-full max-w-md mx-auto">
+            <div className="flex-grow flex items-center justify-center w-full mx-auto">
                 <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-6">
                     <div className="grid gap-2">
                         <Label htmlFor="newPassword">رمز عبور جدید</Label>

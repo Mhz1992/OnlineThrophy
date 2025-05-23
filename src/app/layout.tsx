@@ -68,8 +68,8 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="fa" className={`${dana.variable} ss02 h-full text-foreground `} suppressHydrationWarning>
-        <body className="h-full">
+        <html lang="fa" className={`${dana.variable} ss02 h-full text-foreground mx-auto max-w-3xl `} suppressHydrationWarning>
+        <body className="h-full ">
         {/*
             The main content wrapper.
             - h-full: Ensures it takes 100% height of its parent (body), which is 100% of viewport.
