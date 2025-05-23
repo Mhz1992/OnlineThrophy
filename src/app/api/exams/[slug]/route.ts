@@ -2,53 +2,77 @@ import {NextResponse, NextRequest} from 'next/server';
 import {Exam} from '@/types/api';
 
 const MOCK_EXAM_DATA: Record<string, Exam> = {
-    'math-chapter-1': { // Changed slug key to match home/route.ts
+    'psychology-intro-exam': { // Changed slug key to match home/route.ts
         id: 'exam-main-1',
-        slug: 'math-chapter-1', // Ensure this slug matches the key
+        slug: 'psychology-intro-exam', // Ensure this slug matches the key
         title: 'آزمون اصلی',
         description: 'این آزمون شامل ۱۰ سوال تستی برای ارزیابی دانش شماست.',
         durationMinutes: 30,
         questions: [
             {
                 id: 'q1',
-                priority: 1,
-                text: 'کدام یک از موارد زیر از ویژگی‌های اصلی یک سیستم عامل است؟',
+                text: 'کدام یک از مکاتب روانشناسی بر ناخودآگاه و تجربیات اولیه کودکی تأکید دارد؟',
                 type: 'single-choice',
+                priority: 1,
                 choices: [
-                    {id: 'q1c1', text: 'مدیریت حافظه', priority: 1},
-                    {id: 'q1c2', text: 'مدیریت پردازنده', priority: 2},
-                    {id: 'q1c3', text: 'مدیریت فایل', priority: 3},
-                    {id: 'q1c4', text: 'همه موارد', priority: 4},
+                    { id: 'c1a', text: 'رفتارگرایی', priority: 1 },
+                    { id: 'c1b', text: 'روانکاوی', priority: 1 },
+                    { id: 'c1c', text: 'انسان‌گرایی', priority: 1 },
+                    { id: 'c1d', text: 'شناختی', priority: 1 },
                 ],
-                correctAnswer: 'q1c4',
+                correctAnswer: 'c1b',
             },
             {
                 id: 'q2',
-                priority: 2,
-                text: 'پروتocol HTTP در کدام لایه از مدل OSI قرار دارد؟',
+                text: 'پدر روانشناسی مدرن کیست؟',
                 type: 'single-choice',
+                priority: 2,
                 choices: [
-                    {id: 'q2c1', text: 'لایه شبکه', priority: 1},
-                    {id: 'q2c2', text: 'لایه انتقال', priority: 2},
-                    {id: 'q2c3', text: 'لایه کاربرد', priority: 3},
-                    {id: 'q2c4', text: 'لایه فیزیکی', priority: 4},
+                    { id: 'c2a', text: 'زیگموند فروید' , priority: 1},
+                    { id: 'c2b', text: 'بی.اف. اسکینر' , priority: 1},
+                    { id: 'c2c', text: 'ویلهلم وونت' , priority: 1},
+                    { id: 'c2d', text: 'کارل راجرز' , priority: 1},
                 ],
-                correctAnswer: 'q2c3',
+                correctAnswer: 'c2c',
             },
             {
                 id: 'q3',
-                priority: 3,
-                text: 'کدام زبان برنامه‌نویسی برای توسعه وب‌سایت‌های پویا استفاده می‌شود؟',
+                text: 'کدام بخش از مغز مسئول پردازش احساسات، به ویژه ترس است؟',
                 type: 'single-choice',
+                priority: 3,
                 choices: [
-                    {id: 'q3c1', text: 'C++', priority: 1},
-                    {id: 'q3c2', text: 'Java', priority: 2},
-                    {id: 'q3c3', text: 'Python', priority: 3},
-                    {id: 'q3c4', text: 'JavaScript', priority: 4},
+                    { id: 'c3a', text: 'قشر پیش‌پیشانی' , priority: 1},
+                    { id: 'c3b', text: 'هیپوکامپ' , priority: 1},
+                    { id: 'c3c', text: 'آمیگدال' , priority: 1},
+                    { id: 'c3d', text: 'تالاموس' , priority: 1},
                 ],
-                correctAnswer: 'q3c4',
+                correctAnswer: 'c3c',
             },
-
+            {
+                id: 'q4',
+                text: 'نظریه سلسله مراتب نیازهای مزلو شامل کدام یک از موارد زیر است؟',
+                type: 'single-choice',
+                priority: 4,
+                choices: [
+                    { id: 'c4a', text: 'نیازهای فیزیولوژیکی' , priority: 1},
+                    { id: 'c4b', text: 'نیاز به امنیت' , priority: 1},
+                    { id: 'c4c', text: 'نیاز به خودشکوفایی' , priority: 1},
+                    { id: 'c4d', text: 'نیاز به قدرت' , priority: 1},
+                ],
+            },
+            {
+                id: 'q5',
+                text: 'شرطی‌سازی کلاسیک توسط کدام روانشناس معرفی شد؟',
+                type: 'single-choice',
+                priority: 5,
+                choices: [
+                    { id: 'c5a', text: 'ایوان پاولف' , priority: 1},
+                    { id: 'c5b', text: 'جان واتسون' , priority: 1},
+                    { id: 'c5c', text: 'آلبرت بندورا' , priority: 1},
+                    { id: 'c5d', text: 'ژان پیاژه' , priority: 1},
+                ],
+                correctAnswer: 'c5a',
+            },
         ].sort((a, b) => a.priority - b.priority),
     },
 };
