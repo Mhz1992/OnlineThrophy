@@ -74,19 +74,16 @@ export default function Page() {
                     ) :  MOCK_UNFINISHED_EXAM && (
                         <Card className="w-full rounded-[20px] relative overflow-hidden -top-24">
                             <CardHeader>
-                                <CardTitle className="flex items-center justify-between">
-                                    <span>آزمون‌های ناتمام</span>
-                                </CardTitle>
-                                <CardDescription className="my-2 w-full">
+                                <CardTitle className="w-full">
                                     <Link
                                         href={`/exams/${MOCK_UNFINISHED_EXAM.slug}`}
                                         className="flex items-center justify-between w-full"
                                         passHref
                                     >
-                                        <span className="text-sm">شما آزمون ناتمام دارید.</span>
+                                        <span>شروع آزمون اصلی</span>
                                         <ArrowLIcon height={12} width={12} className="text-gray-500" />
                                     </Link>
-                                </CardDescription>
+                                </CardTitle>
                             </CardHeader>
                         </Card>
                     )}
