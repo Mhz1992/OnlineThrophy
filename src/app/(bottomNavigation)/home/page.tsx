@@ -1,15 +1,15 @@
 'use client';
 
-import React, { useState } from 'react';
+import React, {useState} from 'react';
 import Link from 'next/link';
-import { useQuery } from '@tanstack/react-query';
-import { cn } from '@/lib/utils';
-import { Card,CardHeader, CardTitle } from '@/components/ui/card';
+import {useQuery} from '@tanstack/react-query';
+import {cn} from '@/lib/utils';
+import {Card, CardHeader, CardTitle} from '@/components/ui/card';
 import {ArrowLeftIcon, BookOpenIcon, NotificationIcon} from "@/features/common/assets/svg";
-import { SessionCard } from "@/features/sessions/cards";
-import { NotificationDrawer } from "@/features/drawers/NotificationDrawer";
-import { SessionListSkeleton } from '@/features/skeleton/SessionListSkeleton';
-import { Exam, TrophySession } from '@/types/api';
+import {SessionCard} from "@/features/sessions/cards";
+import {NotificationDrawer} from "@/features/drawers/NotificationDrawer";
+import {SessionListSkeleton} from '@/features/skeleton/SessionListSkeleton';
+import {Exam, TrophySession} from '@/types/api';
 import {Skeleton} from "@/components/skeleton";
 
 interface HomeData {
@@ -21,7 +21,7 @@ interface HomeData {
 export default function Page() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-    const { data, isLoading, isError } = useQuery<HomeData, Error>({
+    const {data, isLoading, isError} = useQuery<HomeData, Error>({
         queryKey: ['homeData'],
         queryFn: async () => {
             const response = await fetch('/api/home');
@@ -38,7 +38,6 @@ export default function Page() {
     });
 
     const userName = data?.userName || "کاربر";
-    const MOCK_UNFINISHED_EXAM = data?.unfinishedExam; // Now correctly reflects null if no exam
     const MOCK_SESSIONS = data?.sessions || [];
 
     if (isError) {
@@ -56,37 +55,36 @@ export default function Page() {
                 className="flex-col relative w-full h-[200px] pt-8 pb-36 bg-primary dark:bg-primary rounded-b-[16px] flex items-right justify-center p-4 text-white">
                 <div className="absolute top-4 left-4">
                     <button onClick={() => setIsDrawerOpen(true)} className="  hover:bg-primary-hover">
-                        <NotificationIcon className="h-10 w-10 text-white" />
+                        <NotificationIcon className="h-10 w-10 text-white"/>
                     </button>
                 </div>
                 <p className="text-l text-right w-full mb-0 pb-0 mt-10">
                     خوش آمدید!
                 </p>
                 <h2 className="text-2xl font-bold text-right w-full">
-                    {isLoading ? <Skeleton className="w-32 h-8 bg-white/20" /> : userName}
+                    {isLoading ? <Skeleton className="w-32 h-8 bg-white/20"/> : userName}
                 </h2>
             </div>
 
-            <div className="flex-grow flex flex-col p-4"> {/* Removed overflow-y-auto here */}
-                <div className="w-full h-10 ">
+            <div className="flex-grow flex flex-col "> {/* Removed overflow-y-auto here */}
+                <div className="w-full h-10 px-4 ">
                     {isLoading ? (
-                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-16">
+                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-10">
                             <CardHeader>
-                                <Skeleton className="w-48 h-6 mb-2" />
-                                <Skeleton className="w-full h-4" />
+                                <Skeleton className="w-48 h-5 "/>
                             </CardHeader>
                         </Card>
-                    ) :  MOCK_UNFINISHED_EXAM && ( // Conditionally render based on MOCK_UNFINISHED_EXAM
-                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-16 bg-[#F2FAFF]">
+                    ) : (
+                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-10 bg-[#F2FAFF]">
                             <CardHeader>
                                 <CardTitle className="w-full">
                                     <Link
-                                        href={`/exams/${MOCK_UNFINISHED_EXAM.slug}`} // Use dynamic slug
+                                        href={`/exams/psychology-intro-exam`} // Use dynamic slug
                                         className="flex items-center justify-between w-full"
                                         passHref
                                     >
                                         <span>شروع آزمون اصلی</span>
-                                        <ArrowLeftIcon height={12} width={12} className="text-black" />
+                                        <ArrowLeftIcon height={12} width={12} className="text-black"/>
                                     </Link>
                                 </CardTitle>
                             </CardHeader>
@@ -97,11 +95,11 @@ export default function Page() {
 
                 <div className="w-full mt-6 relative">
                     <h3 className="text-xl font-semibold text-right mb-4 flex items-center">
-                        <BookOpenIcon height={24} width={24} className={cn("mx-3")} />
+                        <BookOpenIcon height={24} width={24} className={cn("mx-3")}/>
                         جلسات آموزشی
                     </h3>
                     {isLoading ? (
-                        <SessionListSkeleton />
+                        <SessionListSkeleton/>
                     ) : (
                         <div className="space-y-4">
                             {MOCK_SESSIONS.map((session) => (
@@ -118,7 +116,7 @@ export default function Page() {
                 </div>
             </div>
 
-            <NotificationDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen} />
+            <NotificationDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}/>
         </div>
     );
 }

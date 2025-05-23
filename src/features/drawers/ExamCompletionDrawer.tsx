@@ -14,6 +14,7 @@ import {
 } from '@/components/drawer';
 import { Button } from '@/components/button';
 import finishedExam from '@/src/features/common/assets/images/finish-exam.png'
+import {cn} from "@/lib/utils";
 
 interface ExamCompletionDrawerProps {
     open: boolean;
@@ -29,7 +30,7 @@ export const ExamCompletionDrawer: React.FC<ExamCompletionDrawerProps> = ({ open
     };
 
     return (
-        <Drawer open={open} onOpenChange={onOpenChange}>
+        <Drawer open={open} onOpenChange={onOpenChange} className={cn("max-w-3xl")}>
             <DrawerContent>
                 <div className="p-4 flex justify-center items-center">
                     <Image

@@ -172,12 +172,12 @@ export default function PerformancePage() {
     };
 
     return (
-        <div className="flex flex-col h-full p-4">
+        <div className="flex flex-col h-full pt-4">
             <h1 className="text-2xl font-bold text-right mb-4">حساب من</h1>
-            <div className="border-b border-gray-200 dark:border-gray-700 mb-6"></div>
+            <div className="border-b border-gray-200 dark:border-gray-700 "></div>
 
             <div className="flex-grow overflow-y-auto">
-                <h2 className="text-xl font-semibold text-right mb-4">نمودار عملکرد</h2>
+                <h2 className="text-xl font-semibold text-right py-4">نمودار عملکرد</h2>
                 <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 mb-8">
                     {isLoading ? (
                         <Skeleton className="w-full h-full rounded-lg" />

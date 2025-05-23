@@ -26,7 +26,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, score, 
             <CardHeader className="space-y-0 pb-2"> {/* CardHeader now only for title and date */}
                 {/* First row: Title and Date */}
                 <div className="flex items-baseline gap-2 justify-between"> {/* Adjusted to justify-end for RTL title */}
-                    <CardTitle className="text-right text-lg font-semibold">
+                    <CardTitle className="text-right text-md">
                         {title}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">

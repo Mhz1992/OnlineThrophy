@@ -6,8 +6,10 @@ import { verifyToken } from '@/src/lib/jwt'; // Updated import path
 const publicPaths = [
     '/login',
     '/register',
+    '/forgot-password',
     '/api/auth/login',
     '/api/auth/register',
+    '/api/auth/forgot-password',
     // Add any other public API routes or static assets here if needed
 ];
 

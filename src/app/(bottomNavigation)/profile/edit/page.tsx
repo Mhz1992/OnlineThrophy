@@ -5,7 +5,8 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/input'; // Assuming Input is available
-import { Label } from '@/components/ui/label'; // Assuming Label is available
+import { Label } from '@/components/ui/label';
+import {toast} from "sonner"; // Assuming Label is available
 
 // Helper function for basic Shamsi date validation (copied from register page)
 const isValidShamsiDate = (year: number, month: number, day: number): boolean => {
@@ -71,18 +72,7 @@ export default function EditProfilePage() {
             console.log('Updating profile with:', { name, family, birthDate });
             await new Promise(resolve => setTimeout(resolve, 1500)); // Simulate network delay
 
-            // In a real application, you would call your update profile API here
-            // const response = await fetch('/api/profile/update', {
-            //     method: 'POST',
-            //     headers: { 'Content-Type': 'application/json' },
-            //     body: JSON.stringify({ name, family, birthDate }),
-            // });
-            // if (!response.ok) {
-            //     const data = await response.json();
-            //     throw new Error(data.message || 'خطا در بروزرسانی پروفایل');
-            // }
-
-            alert('پروفایل با موفقیت بروزرسانی شد!'); // Translated: Profile updated successfully
+            toast.success('پروفایل با موفقیت بروزرسانی شد!'); // Translated: Profile updated successfully
             router.push('/profile'); // Redirect back to profile page
 
         } catch (err: unknown) { // Changed 'any' to 'unknown'

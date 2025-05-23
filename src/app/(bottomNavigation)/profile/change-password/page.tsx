@@ -10,15 +10,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import { Input } from '@/components/input';
-import {
-    Drawer,
-    DrawerClose,
-    DrawerContent,
-    DrawerDescription,
-    DrawerFooter,
-    DrawerHeader,
-    DrawerTitle,
-} from '@/components/drawer';
+import {ConfirmChangePasswordDrawer} from "@/features/drawers/ConfirmChangePasswordDrawer";
 
 const changePasswordSchema = z
     .object({
@@ -162,31 +154,9 @@ export default function ChangePasswordPage() {
                 </Link>
             </div>
 
-            {/* Confirmation Drawer */}
-            <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
-                <DrawerContent className="rounded-t-[30px] rounded-b-none">
-                    <DrawerHeader>
-                        <DrawerTitle>تایید تغییر رمز عبور</DrawerTitle>
-                        <DrawerDescription>
-                            آیا از تغییر رمز عبور خود به{' '}
-                            <span className="font-mono font-bold">
-                                {passwordToConfirm ? '*'.repeat(passwordToConfirm.length) : ''}
-                            </span>{' '}
-                            اطمینان دارید؟
-                        </DrawerDescription>
-                    </DrawerHeader>
-                    <DrawerFooter>
-                        <Button onClick={handleConfirmChangePassword} disabled={loading}>
-                            {loading ? 'در حال تغییر...' : 'تایید و تغییر رمز عبور'}
-                        </Button>
-                        <DrawerClose asChild>
-                            <Button variant="outline" disabled={loading}>
-                                لغو
-                            </Button>
-                        </DrawerClose>
-                    </DrawerFooter>
-                </DrawerContent>
-            </Drawer>
+            <ConfirmChangePasswordDrawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}
+                                         passwordToConfirm={passwordToConfirm} onClick={handleConfirmChangePassword}
+                                         disabled={loading}/>
         </div>
     );
 }

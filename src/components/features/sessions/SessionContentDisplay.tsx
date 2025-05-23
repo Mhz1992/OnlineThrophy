@@ -32,8 +32,8 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ id, title, link, isPlaying, o
             wavesurfer.current = WaveSurfer.create({
                 container: waveformRef.current,
                 waveColor: '#A8B0B9',
-                progressColor: '#00A86B',
-                cursorColor: '#00A86B',
+                progressColor: '#1F95EB',
+                cursorColor: '#000',
                 barWidth: 2,
                 barRadius: 3,
                 barGap: 1,

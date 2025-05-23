@@ -15,7 +15,7 @@ const themes = {
             'secondary-foreground': '#4F4B45',
             muted: '#EDE6DA',
             'muted-foreground': '#81807D',
-            accent: '#E5E1D7',
+            accent: '#8bc0e7',
             'accent-foreground': '#27231B',
             destructive: '#131312',
             'destructive-foreground': '#FFFFFF',
