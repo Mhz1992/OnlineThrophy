@@ -75,7 +75,7 @@ export async function GET() {
     await new Promise(resolve => setTimeout(resolve, 1000));
 
     return NextResponse.json({
-        unfinishedExam: MOCK_UNFINISHED_EXAM,
+        unfinishedExam: [],
         sessions: MOCK_SESSIONS,
         userName: "نیوشا رضایی",
         hasUnfinishedExam: true, // This can be dynamic based on user data

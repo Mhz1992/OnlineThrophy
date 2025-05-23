@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useQuery } from '@tanstack/react-query';
 import { cn } from '@/lib/utils';
 import { Card,CardHeader, CardTitle } from '@/components/ui/card';
-import {ArrowLeftIcon, ArrowLIcon, BookOpenIcon, NotificationIcon} from "@/features/common/assets/svg";
+import {ArrowLeftIcon, BookOpenIcon, NotificationIcon} from "@/features/common/assets/svg";
 import { SessionCard } from "@/features/sessions/cards";
 import { NotificationDrawer } from "@/features/drawers/NotificationDrawer";
 import { SessionListSkeleton } from '@/features/skeleton/SessionListSkeleton';
