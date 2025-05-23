@@ -72,7 +72,7 @@ export default function Page() {
                             </CardHeader>
                         </Card>
                     ) :  MOCK_UNFINISHED_EXAM && (
-                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-24">
+                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-24 bg-[#F2FAFF]">
                             <CardHeader>
                                 <CardTitle className="w-full">
                                     <Link
