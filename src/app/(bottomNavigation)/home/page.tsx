@@ -65,14 +65,14 @@ export default function Page() {
             <div className="flex-grow flex flex-col p-4"> {/* Removed overflow-y-auto here */}
                 <div className="w-full h-10 ">
                     {isLoading ? (
-                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-24">
+                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-16">
                             <CardHeader>
                                 <Skeleton className="w-48 h-6 mb-2" />
                                 <Skeleton className="w-full h-4" />
                             </CardHeader>
                         </Card>
                     ) :  MOCK_UNFINISHED_EXAM && (
-                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-24 bg-[#F2FAFF]">
+                        <Card className="w-full rounded-[20px] relative overflow-hidden -top-16 bg-[#F2FAFF]">
                             <CardHeader>
                                 <CardTitle className="w-full">
                                     <Link
