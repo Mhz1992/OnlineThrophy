@@ -155,7 +155,7 @@ export default function ProfilePage() {
             </div>
 
             {/* Exit Button - Very Bottom */}
-            <div className="w-full max-w-md mx-auto mt-auto">
+            <div className="w-full max-w-md mx-auto mt-auto mb-5">
                 <Button onClick={handleLogout} className="w-full" variant="destructive">
                     خروج از حساب کاربری
                 </Button>
