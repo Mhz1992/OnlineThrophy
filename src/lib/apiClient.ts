@@ -1,5 +1,15 @@
 // src/lib/apiClient.ts
 
+// Custom error class for authentication failures
+export class AuthError extends Error {
+    statusCode: number;
+    constructor(message: string, statusCode: number) {
+        super(message);
+        this.name = 'AuthError';
+        this.statusCode = statusCode;
+    }
+}
+
 interface ApiClientOptions {
     method?: string;
     body?: Record<string, any>;
@@ -16,6 +26,7 @@ interface ApiClientOptions {
  * @param options Request options including method, body, headers, and an optional isAuthRequest flag.
  * @returns A Promise that resolves with the parsed JSON response.
  * @throws An Error if the network request fails or the API returns a non-OK status.
+ * @throws An AuthError if the API returns a 401 or 403 status.
  */
 export async function apiClient<T>(url: string, options: ApiClientOptions = {}): Promise<T> {
     const { method = 'GET', body, headers, isAuthRequest = false } = options;
@@ -48,8 +59,14 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
     const response = await fetch(fullUrl, config);
 
     if (!response.ok) {
-        // Attempt to parse error message from response body, or use status text
         const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+
+        // Throw AuthError for 401 or 403 responses
+        if (response.status === 401 || response.status === 403) {
+            throw new AuthError(errorData.message || 'Authentication failed or forbidden', response.status);
+        }
+
+        // For other non-OK responses, throw a generic Error
         throw new Error(errorData.message || `API Error: ${response.statusText}`);
     }
 

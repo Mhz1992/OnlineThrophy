@@ -10,9 +10,6 @@ const publicPaths = [
     '/api/auth/forgot-password',
     '/api/backend/auth/signup',
     '/api/backend/auth/login'
-
-
-    // Add any other public API routes or static assets here if needed
 ];
 
 export async function middleware(request: NextRequest) {
@@ -24,18 +21,30 @@ export async function middleware(request: NextRequest) {
     // Get the token from the cookie
     const token = request.cookies.get('token')?.value;
 
+    let isAuthenticated = false;
+    if (token) {
+        const decodedToken = verifyToken(token);
+        if (decodedToken) {
+            isAuthenticated = true;
+        } else {
+            // If token exists but is invalid/expired, clear the cookie
+            const response = NextResponse.redirect(new URL('/login', request.url));
+            response.cookies.delete('token');
+            return response;
+        }
+    }
+
     if (isPublicPath) {
-        // If it's a public path and a token exists, redirect authenticated users from login/register
-        if (token && verifyToken(token)) {
-            // User is authenticated and trying to access login/register, redirect to home
+        // If it's a public path and user is authenticated, redirect to home
+        if (isAuthenticated) {
             return NextResponse.redirect(new URL('/', request.url));
         }
-        // Allow access to public paths if not authenticated or no token
+        // Allow access to public paths if not authenticated
         return NextResponse.next();
     } else {
         // If it's a protected path
-        if (!token || !verifyToken(token)) {
-            // If no token or invalid token, redirect to login
+        if (!isAuthenticated) {
+            // If not authenticated, redirect to login
             return NextResponse.redirect(new URL('/login', request.url));
         }
         // Allow access if authenticated
