@@ -56,7 +56,8 @@ export default function RegisterPage() {
 
     // Function to perform the registration API call
     const registerUser = async (userData: { name: string; family: string; phone: string; password: string; birthDate: string }) => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}auth/signup`, {
+        // Use the proxied path instead of the direct external URL
+        const response = await fetch(`/api/backend/auth/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',

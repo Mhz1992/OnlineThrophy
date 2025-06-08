@@ -61,10 +61,13 @@ const nextConfig = {
                 source: '/audio-proxy/:path*',
                 destination: 'http://farsi.voiceoversamples.com/:path*',
             },
+            // NEW: Proxy backend API calls to bypass CORS
+            {
+                source: '/api/backend/:path*',
+                destination: 'http://185.97.118.183:8080/:path*',
+            },
         ];
     },
-
-
 };
 
 export default nextConfig;
