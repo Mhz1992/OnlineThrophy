@@ -9,7 +9,9 @@ const publicPaths = [
     '/forgot-password',
     '/api/auth/forgot-password',
     '/api/backend/auth/signup',
-    '/api/backend/auth/login'
+    '/api/backend/auth/login',
+    '/api/auth/set-token-cookie', // NEW: Allow access to set token cookie
+    '/api/auth/clear-token-cookie' // NEW: Allow access to clear token cookie
 ];
 
 export async function middleware(request: NextRequest) {
@@ -23,13 +25,15 @@ export async function middleware(request: NextRequest) {
 
     let isAuthenticated = false;
     if (token) {
+        // Attempt to verify the token. This assumes the token is a JWT and
+        // the JWT_SECRET in your environment matches the one used by the external API.
         const decodedToken = verifyToken(token);
         if (decodedToken) {
             isAuthenticated = true;
         } else {
-            // If token exists but is invalid/expired, clear the cookie
+            // If token exists but is invalid/expired, clear the cookie and redirect
             const response = NextResponse.redirect(new URL('/login', request.url));
-            response.cookies.delete('token');
+            response.cookies.delete('token'); // Clear the invalid cookie
             return response;
         }
     }

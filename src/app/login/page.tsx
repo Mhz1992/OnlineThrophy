@@ -34,10 +34,25 @@ export default function LoginPage() {
     // React Query mutation hook
     const loginMutation = useMutation({
         mutationFn: loginUserApi,
-        onSuccess: (response) => {
+        onSuccess: async (response) => { // Made async to await cookie setting
             // Save the token to localStorage upon successful login
             if (response.success && response.data) {
                 localStorage.setItem('authToken', response.data); // Save the token
+
+                // Call the new API route to set the HTTP-only cookie
+                try {
+                    await fetch('/api/auth/set-token-cookie', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ token: response.data }),
+                    });
+                } catch (cookieError) {
+                    console.error('Failed to set token cookie:', cookieError);
+                    // Handle this error if necessary, but usually not critical for user flow
+                }
+
                 toast.success(response.message || 'ورود موفقیت‌آمیز بود');
                 router.push('/'); // Redirect to home page
             } else {
