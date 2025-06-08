@@ -1,6 +1,3 @@
-// src/lib/apiClient.ts
-
-// Custom error class for authentication failures
 export class AuthError extends Error {
     statusCode: number;
     constructor(message: string, statusCode: number) {
@@ -9,7 +6,7 @@ export class AuthError extends Error {
         this.statusCode = statusCode;
     }
 }
-
+//  @typescript-eslint/no-explicit-any
 interface ApiClientOptions {
     method?: string;
     body?: Record<string, any>;
