@@ -15,6 +15,8 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/src/components/drawer';
+import {useMutation} from '@tanstack/react-query'; // New import for React Query
+import {toast} from 'sonner'; // New import for toast notifications
 
 import {SuccessIcon} from "@/features/common/assets/svg";
 
@@ -42,9 +44,8 @@ const isValidShamsiDate = (year: number, month: number, day: number): boolean =>
 };
 
 export default function RegisterPage() {
-    const [error, setError] = useState('');
-    const [dateError, setDateError] = useState('');
-    const [loading, setLoading] = useState(false);
+    const [apiError, setApiError] = useState(''); // State for API-related errors
+    const [dateError, setDateError] = useState(''); // State for date validation errors
     const [showPassword, setShowPassword] = useState(false);
     const [isDrawerOpen, setIsDrawerOpen] = useState(false); // State for drawer visibility
     const router = useRouter();
@@ -53,31 +54,59 @@ export default function RegisterPage() {
         setShowPassword((prev) => !prev);
     };
 
+    // Function to perform the registration API call
+    const registerUser = async (userData: { name: string; family: string; phone: string; password: string; birthDate: string }) => {
+        const response = await fetch(`${process.env.NEXT_PUBLIC_URL}auth/signup`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(userData),
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.message || 'ثبت نام ناموفق بود');
+        }
+        return response.json();
+    };
+
+    // React Query mutation hook
+    const mutation = useMutation({
+        mutationFn: registerUser,
+        onSuccess: () => {
+            setIsDrawerOpen(true);
+            // Optionally, you might want to clear the form fields here
+            // e.g., (document.getElementById('register-form') as HTMLFormElement)?.reset();
+        },
+        onError: (err: Error) => {
+            setApiError(err.message); // Set the API error message to local state
+            toast.error(err.message); // Show a toast notification
+        },
+    });
+
     const handleSubmit = async (e: React.FormEvent) => {
-        const formData = new FormData(e.target)
-
-        const name = formData.get("name")
-        const family = formData.get("family")
-        const phone = formData.get("phone")
-        const email = formData.get("email")
-        const password = formData.get("password")
-        const confirmPassword = formData.get("confirm-password")
-        const birthDay = formData.get("birth-day")
-        const birthMonth = formData.get("birth-month")
-        const birthYear = formData.get("birth-year")
-
-
-        console.log(name, family, phone, email, password, confirmPassword, birthDay, birthMonth, birthYear)
         e.preventDefault();
-        setError('');
-        setDateError('');
-        setLoading(true);
+        setApiError(''); // Clear previous API errors
+        setDateError(''); // Clear previous date validation errors
+
+        const formData = new FormData(e.target as HTMLFormElement);
+
+        const name = formData.get("name") as string;
+        const family = formData.get("family") as string;
+        const phone = formData.get("phone") as string;
+        const email = formData.get("email") as string; // 'email' is extracted but not sent to backend in original code
+        const password = formData.get("password") as string;
+        const confirmPassword = formData.get("confirm-password") as string;
+        const birthDay = formData.get("birth-day") as string;
+        const birthMonth = formData.get("birth-month") as string;
+        const birthYear = formData.get("birth-year") as string;
 
         if (password !== confirmPassword) {
-            setError('رمز عبور و تکرار آن مطابقت ندارند.');
-            setLoading(false);
+            setApiError('رمز عبور و تکرار آن مطابقت ندارند.');
             return;
         }
+
         if (
             !birthDay ||
             !birthMonth ||
@@ -85,6 +114,7 @@ export default function RegisterPage() {
             typeof birthDay !== "string" ||
             typeof birthMonth !== "string" ||
             typeof birthYear !== "string") {
+            setDateError('تاریخ تولد وارد شده معتبر نیست.');
             return;
         }
 
@@ -94,41 +124,19 @@ export default function RegisterPage() {
 
         if (isNaN(dayNum) || isNaN(monthNum) || isNaN(yearNum) || !isValidShamsiDate(yearNum, monthNum, dayNum)) {
             setDateError('تاریخ تولد وارد شده معتبر نیست.');
-            setLoading(false);
             return;
         }
 
         const currentShamsiYear = 1402; // Placeholder for current Shamsi year
         if (yearNum > currentShamsiYear || yearNum < 1300) {
             setDateError('سال تولد باید بین ۱۳۰۰ و سال جاری باشد.');
-            setLoading(false);
             return;
         }
 
         const birthDate = `${yearNum}/${monthNum.toString().padStart(2, '0')}/${dayNum.toString().padStart(2, '0')}`;
 
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}auth/signup`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({name, family, phone, password, birthDate}),
-            });
-
-            if (response.ok) {
-                // Open the drawer instead of alert
-                setIsDrawerOpen(true);
-            } else {
-                const data = await response.json();
-                setError(data.message || 'ثبت نام ناموفق بود');
-            }
-        } catch (err) {
-            setError('خطای غیرمنتظره‌ای رخ داد. لطفا دوباره تلاش کنید.');
-            console.error('Registration error:', err);
-        } finally {
-            setLoading(false);
-        }
+        // Trigger the mutation with the collected data
+        mutation.mutate({ name, family, phone, password, birthDate });
     };
 
     return (
@@ -266,15 +274,16 @@ export default function RegisterPage() {
                             </div>
                             {dateError && <p className="text-red-500 text-sm mt-1">{dateError}</p>}
                         </div>
-                        {error && <p className="text-red-500 text-sm">{error}</p>}
+                        {/* Display API error if any */}
+                        {apiError && <p className="text-red-500 text-sm">{apiError}</p>}
                     </form>
                 </div>
             </div>
 
             {/* Combined Button and Login Link Section - Very Bottom */}
             <div className="w-full max-w-md mx-auto flex flex-col items-center">
-                <Button type="submit" form="register-form" className="w-full" disabled={loading} variant="default">
-                    {loading ? 'در حال ثبت نام...' : 'ثبت نام'}
+                <Button type="submit" form="register-form" className="w-full" disabled={mutation.isPending} variant="default">
+                    {mutation.isPending ? 'در حال ثبت نام...' : 'ثبت نام'}
                 </Button>
                 <p className="text-sm text-muted-foreground mt-4">
                     حساب کاربری دارید؟{' '}
