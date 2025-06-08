@@ -37,6 +37,7 @@ export async function middleware(request: NextRequest) {
             return response;
         }
     }
+    console.log(isAuthenticated)
 
     if (isPublicPath) {
         // If it's a public path and user is authenticated, redirect to home
