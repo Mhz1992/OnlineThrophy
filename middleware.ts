@@ -1,16 +1,16 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
-import { verifyToken } from '@/src/lib/jwt'; // Updated import path
+import {NextResponse} from 'next/server';
+import type {NextRequest} from 'next/server';
+import {verifyToken} from '@/src/lib/jwt'; // Updated import path
 
 // Define public paths that do not require authentication
 const publicPaths = [
     '/login',
     '/register',
     '/forgot-password',
-    '/api/auth/login',
-    '/api/auth/register',
     '/api/auth/forgot-password',
-    '/api/backend/auth/signup'
+    '/api/backend/auth/signup',
+    '/api/backend/auth/login'
+
 
     // Add any other public API routes or static assets here if needed
 ];
