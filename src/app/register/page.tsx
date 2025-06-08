@@ -45,6 +45,7 @@ export default function RegisterPage() {
     const [name, setName] = useState('');
     const [family, setFamily] = useState('');
     const [phone, setPhone] = useState('');
+    const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [birthDay, setBirthDay] = useState('');
@@ -93,7 +94,7 @@ export default function RegisterPage() {
         const birthDate = `${yearNum}/${monthNum.toString().padStart(2, '0')}/${dayNum.toString().padStart(2, '0')}`;
 
         try {
-            const response = await fetch('/api/auth/register', {
+            const response = await fetch('/auth/signup', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -162,6 +163,17 @@ export default function RegisterPage() {
                             />
                         </div>
                         <div>
+                            <Label htmlFor="email">پست الکترونیک</Label>
+                            <Input
+                                id="email"
+                                type="email"
+                                value={email}
+                                onChange={(e) => setEmail(e.target.value)}
+                                required
+                                placeholder="مثال: my_email@gmail.com"
+                            />
+                        </div>
+                        <div>
                             <Label htmlFor="password">رمز عبور</Label>
                             <div className="relative">
                                 <Input
@@ -176,9 +188,10 @@ export default function RegisterPage() {
                                 />
                                 <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     {showPassword ? (
-                                        <EyeOffIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500" />
+                                        <EyeOffIcon onClick={togglePasswordVisibility}
+                                                    className="size-5 text-gray-500"/>
                                     ) : (
-                                        <EyeIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500" />
+                                        <EyeIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500"/>
                                     )}
                                 </span>
                             </div>
@@ -198,9 +211,10 @@ export default function RegisterPage() {
                                 />
                                 <span className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5">
                                     {showPassword ? (
-                                        <EyeOffIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500" />
+                                        <EyeOffIcon onClick={togglePasswordVisibility}
+                                                    className="size-5 text-gray-500"/>
                                     ) : (
-                                        <EyeIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500" />
+                                        <EyeIcon onClick={togglePasswordVisibility} className="size-5 text-gray-500"/>
                                     )}
                                 </span>
                             </div>
@@ -258,7 +272,7 @@ export default function RegisterPage() {
                     {loading ? 'در حال ثبت نام...' : 'ثبت نام'}
                 </Button>
                 <p className="text-sm text-muted-foreground mt-4">
-                    حساب کاربری دارید؟{' '}
+                حساب کاربری دارید؟{' '}
                     <Link href="/login" className="text-primary hover:underline">
                         ورود کنید
                     </Link>
