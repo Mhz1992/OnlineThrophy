@@ -6,7 +6,8 @@ import { Label } from '@/components/ui/label';
 import Link from 'next/link';
 import { Input } from "@/components/input";
 import { Button } from "@/components/ui/button";
-import { EyeIcon, EyeOffIcon } from '@/src/components/icons/EyeIcons'; // Import from new file
+import { EyeIcon, EyeOffIcon } from '@/src/components/icons/EyeIcons';
+import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish"; // Import from new file
 
 
 export default function LoginPage() {
@@ -23,6 +24,10 @@ export default function LoginPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        const formData = new FormData(e.target as HTMLFormElement);
+
+        const userName = convertDigitsToEnglish(formData.get("userName") as string);
+        const password = convertDigitsToEnglish(formData.get("password") as string);
         setError('');
         setLoading(true);
 
@@ -62,12 +67,11 @@ export default function LoginPage() {
                 <div className="w-full">
                     <form id="login-form" onSubmit={handleSubmit} className="space-y-4">
                         <div>
-                            <Label htmlFor="phone">شماره تلفن</Label>
+                            <Label htmlFor="userNmae">شماره تلفن</Label>
                             <Input
-                                id="phone"
-                                type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                id="userNmae"
+                                name="userName"
+                                type="text"
                                 required
                                 placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹"
                             />
@@ -77,6 +81,7 @@ export default function LoginPage() {
                             <div className="relative">
                                 <Input
                                     id="password"
+                                    name="password"
                                     type={showPassword ? 'text' : 'password'}
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}

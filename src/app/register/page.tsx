@@ -19,6 +19,7 @@ import {useMutation} from '@tanstack/react-query'; // New import for React Query
 import {toast} from 'sonner'; // New import for toast notifications
 
 import {SuccessIcon} from "@/features/common/assets/svg";
+import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
 
 // Helper function for basic Shamsi date validation
 const isValidShamsiDate = (year: number, month: number, day: number): boolean => {
@@ -55,14 +56,24 @@ export default function RegisterPage() {
     };
 
     // Function to perform the registration API call
-    const registerUser = async (userData: { name: string; family: string; phone: string; password: string; birthDate: string }) => {
+    const registerUserApi = async (userData: {
+        firstName: string;
+        lastName: string;
+        phoneNumber: string;
+        password: string;
+        birthDate: string,
+        email: string
+    }) => {
         // Use the proxied path instead of the direct external URL
+        console.log(userData)
         const response = await fetch(`/api/backend/auth/signup`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(userData),
+            body: JSON.stringify(
+                userData
+            ),
         });
 
         if (!response.ok) {
@@ -73,8 +84,8 @@ export default function RegisterPage() {
     };
 
     // React Query mutation hook
-    const mutation = useMutation({
-        mutationFn: registerUser,
+    const registerUser = useMutation({
+        mutationFn: registerUserApi,
         onSuccess: () => {
             setIsDrawerOpen(true);
             // Optionally, you might want to clear the form fields here
@@ -93,12 +104,12 @@ export default function RegisterPage() {
 
         const formData = new FormData(e.target as HTMLFormElement);
 
-        const name = formData.get("name") as string;
-        const family = formData.get("family") as string;
-        const phone = formData.get("phone") as string;
+        const firstName = formData.get("name") as string;
+        const lastName = formData.get("family") as string;
+        const phoneNumber = convertDigitsToEnglish(formData.get("phone") as string);
         const email = formData.get("email") as string; // 'email' is extracted but not sent to backend in original code
-        const password = formData.get("password") as string;
-        const confirmPassword = formData.get("confirm-password") as string;
+        const password = convertDigitsToEnglish(formData.get("password") as string);
+        const confirmPassword = convertDigitsToEnglish(formData.get("confirm-password") as string);
         const birthDay = formData.get("birth-day") as string;
         const birthMonth = formData.get("birth-month") as string;
         const birthYear = formData.get("birth-year") as string;
@@ -134,10 +145,10 @@ export default function RegisterPage() {
             return;
         }
 
-        const birthDate = `${yearNum}/${monthNum.toString().padStart(2, '0')}/${dayNum.toString().padStart(2, '0')}`;
+        const birthDate = `${yearNum}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
 
         // Trigger the mutation with the collected data
-        mutation.mutate({ name, family, phone, password, birthDate });
+        registerUser.mutate({firstName, lastName, phoneNumber, password, birthDate, email});
     };
 
     return (
@@ -283,8 +294,9 @@ export default function RegisterPage() {
 
             {/* Combined Button and Login Link Section - Very Bottom */}
             <div className="w-full max-w-md mx-auto flex flex-col items-center">
-                <Button type="submit" form="register-form" className="w-full" disabled={mutation.isPending} variant="default">
-                    {mutation.isPending ? 'در حال ثبت نام...' : 'ثبت نام'}
+                <Button type="submit" form="register-form" className="w-full" disabled={registerUser.isPending}
+                        variant="default">
+                    {registerUser.isPending ? 'در حال ثبت نام...' : 'ثبت نام'}
                 </Button>
                 <p className="text-sm text-muted-foreground mt-4">
                     حساب کاربری دارید؟{' '}

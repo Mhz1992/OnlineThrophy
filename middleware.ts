@@ -10,6 +10,8 @@ const publicPaths = [
     '/api/auth/login',
     '/api/auth/register',
     '/api/auth/forgot-password',
+    '/api/backend/auth/signup'
+
     // Add any other public API routes or static assets here if needed
 ];
 
