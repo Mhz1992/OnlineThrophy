@@ -14,7 +14,6 @@ interface NavItemProps {
 }
 
 const NavItem: React.FC<NavItemProps> = ({ href, label, isActive, icon:Icon }) => {
-    console.log(Icon)
     return (
         <Link
             href={href}

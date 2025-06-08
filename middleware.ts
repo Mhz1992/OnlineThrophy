@@ -1,6 +1,6 @@
 import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
-import {verifyToken} from '@/src/lib/jwt'; // Updated import path
+// import {verifyToken} from '@/src/lib/jwt'; // No longer needed for external JWT verification in middleware
 
 // Define public paths that do not require authentication
 const publicPaths = [
@@ -10,8 +10,8 @@ const publicPaths = [
     '/api/auth/forgot-password',
     '/api/backend/auth/signup',
     '/api/backend/auth/login',
-    '/api/auth/set-token-cookie', // NEW: Allow access to set token cookie
-    '/api/auth/clear-token-cookie' // NEW: Allow access to clear token cookie
+    '/api/auth/set-token-cookie',
+    '/api/auth/clear-token-cookie'
 ];
 
 export async function middleware(request: NextRequest) {
@@ -24,35 +24,34 @@ export async function middleware(request: NextRequest) {
     const token = request.cookies.get('token')?.value;
 
     let isAuthenticated = false;
+    // If a token exists in the cookie, we assume the user is authenticated for middleware purposes.
+    // The actual validation (expiry, signature) will be handled by the client-side apiClient
+    // when making API calls, which will then trigger logout/redirection on 401/403.
     if (token) {
-        // Attempt to verify the token. This assumes the token is a JWT and
-        // the JWT_SECRET in your environment matches the one used by the external API.
-        const decodedToken = verifyToken(token);
-        if (decodedToken) {
-            isAuthenticated = true;
-        } else {
-            // If token exists but is invalid/expired, clear the cookie and redirect
-            const response = NextResponse.redirect(new URL('/login', request.url));
-            response.cookies.delete('token'); // Clear the invalid cookie
-            return response;
-        }
+        isAuthenticated = true;
+        // Removed verifyToken call as it cannot validate external JWTs with a local secret.
+        // If you later control the backend and share the JWT_SECRET, you can re-introduce verification here.
     }
-    console.log(isAuthenticated)
+    console.log(`Path: ${path}, Token present: ${!!token}, Is authenticated (middleware): ${isAuthenticated}`);
 
     if (isPublicPath) {
         // If it's a public path and user is authenticated, redirect to home
         if (isAuthenticated) {
+            console.log(`Redirecting authenticated user from public path ${path} to /`);
             return NextResponse.redirect(new URL('/', request.url));
         }
         // Allow access to public paths if not authenticated
+        console.log(`Allowing access to public path ${path}`);
         return NextResponse.next();
     } else {
         // If it's a protected path
         if (!isAuthenticated) {
             // If not authenticated, redirect to login
+            console.log(`Redirecting unauthenticated user from protected path ${path} to /login`);
             return NextResponse.redirect(new URL('/login', request.url));
         }
         // Allow access if authenticated
+        console.log(`Allowing access to protected path ${path} for authenticated user`);
         return NextResponse.next();
     }
 }

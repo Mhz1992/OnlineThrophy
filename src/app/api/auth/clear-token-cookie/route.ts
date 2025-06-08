@@ -1,7 +1,7 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { serialize } from 'cookie';
 
-export async function POST(request: NextRequest) {
+export async function POST() {
     // Clear the token cookie by setting its maxAge to 0 and an empty value
     const cookie = serialize('token', '', {
         httpOnly: true,

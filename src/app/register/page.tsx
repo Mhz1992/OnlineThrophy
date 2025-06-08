@@ -18,7 +18,8 @@ import {
 import {useMutation} from '@tanstack/react-query';
 import {toast} from 'sonner';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
-import { apiClient } from '@/src/lib/apiClient'; // Import the new apiClient
+import { apiClient } from '@/src/lib/apiClient';
+import {SuccessIcon} from "@/features/common/assets/svg"; // Import the new apiClient
 
 // Helper function for basic Shamsi date validation
 const isValidShamsiDate = (year: number, month: number, day: number): boolean => {
@@ -74,12 +75,8 @@ export default function RegisterPage() {
     // React Query mutation hook
     const registerUser = useMutation({
         mutationFn: registerUserApi,
-        onSuccess: (response) => {
+        onSuccess: () => {
             setIsDrawerOpen(true);
-            // If registration also returns a token and you want to auto-login, you could save it here:
-            // if (response.success && response.data) {
-            //     localStorage.setItem('authToken', response.data);
-            // }
         },
         onError: (err: Error) => {
             setApiError(err.message);
