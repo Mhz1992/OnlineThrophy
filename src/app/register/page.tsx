@@ -1,12 +1,12 @@
 'use client';
 
-import React, { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { Label } from '@/components/ui/label';
+import React, {useState} from 'react';
+import {useRouter} from 'next/navigation';
+import {Label} from '@/components/ui/label';
 import Link from 'next/link';
-import { Input } from "@/components/input";
-import { Button } from "@/components/ui/button";
-import { EyeIcon, EyeOffIcon } from '@/src/components/icons/EyeIcons';
+import {Input} from "@/components/input";
+import {Button} from "@/components/ui/button";
+import {EyeIcon, EyeOffIcon} from '@/src/components/icons/EyeIcons';
 import {
     Drawer,
     DrawerContent,
@@ -42,15 +42,6 @@ const isValidShamsiDate = (year: number, month: number, day: number): boolean =>
 };
 
 export default function RegisterPage() {
-    const [name, setName] = useState('');
-    const [family, setFamily] = useState('');
-    const [phone, setPhone] = useState('');
-    const [email, setEmail] = useState('');
-    const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
-    const [birthDay, setBirthDay] = useState('');
-    const [birthMonth, setBirthMonth] = useState('');
-    const [birthYear, setBirthYear] = useState('');
     const [error, setError] = useState('');
     const [dateError, setDateError] = useState('');
     const [loading, setLoading] = useState(false);
@@ -63,6 +54,20 @@ export default function RegisterPage() {
     };
 
     const handleSubmit = async (e: React.FormEvent) => {
+        const formData = new FormData(e.target)
+
+        const name = formData.get("name")
+        const family = formData.get("family")
+        const phone = formData.get("phone")
+        const email = formData.get("email")
+        const password = formData.get("password")
+        const confirmPassword = formData.get("confirm-password")
+        const birthDay = formData.get("birth-day")
+        const birthMonth = formData.get("birth-month")
+        const birthYear = formData.get("birth-year")
+
+
+        console.log(name, family, phone, email, password, confirmPassword, birthDay, birthMonth, birthYear)
         e.preventDefault();
         setError('');
         setDateError('');
@@ -71,6 +76,15 @@ export default function RegisterPage() {
         if (password !== confirmPassword) {
             setError('رمز عبور و تکرار آن مطابقت ندارند.');
             setLoading(false);
+            return;
+        }
+        if (
+            !birthDay ||
+            !birthMonth ||
+            !birthYear ||
+            typeof birthDay !== "string" ||
+            typeof birthMonth !== "string" ||
+            typeof birthYear !== "string") {
             return;
         }
 
@@ -94,12 +108,12 @@ export default function RegisterPage() {
         const birthDate = `${yearNum}/${monthNum.toString().padStart(2, '0')}/${dayNum.toString().padStart(2, '0')}`;
 
         try {
-            const response = await fetch('/auth/signup', {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_URL}auth/signup`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ name, family, phone, password, birthDate }),
+                body: JSON.stringify({name, family, phone, password, birthDate}),
             });
 
             if (response.ok) {
@@ -133,9 +147,8 @@ export default function RegisterPage() {
                             <Label htmlFor="name">نام</Label>
                             <Input
                                 id="name"
+                                name="name"
                                 type="text"
-                                value={name}
-                                onChange={(e) => setName(e.target.value)}
                                 required
                                 placeholder="مثال: نیما"
                             />
@@ -145,8 +158,7 @@ export default function RegisterPage() {
                             <Input
                                 id="family"
                                 type="text"
-                                value={family}
-                                onChange={(e) => setFamily(e.target.value)}
+                                name="family"
                                 required
                                 placeholder="مثال: انصاری"
                             />
@@ -156,8 +168,7 @@ export default function RegisterPage() {
                             <Input
                                 id="phone"
                                 type="tel"
-                                value={phone}
-                                onChange={(e) => setPhone(e.target.value)}
+                                name="phone"
                                 required
                                 placeholder="مثال: ۰۹۱۲۳۴۵۶۷۸۹"
                             />
@@ -167,8 +178,7 @@ export default function RegisterPage() {
                             <Input
                                 id="email"
                                 type="email"
-                                value={email}
-                                onChange={(e) => setEmail(e.target.value)}
+                                name="email"
                                 required
                                 placeholder="مثال: my_email@gmail.com"
                             />
@@ -178,9 +188,8 @@ export default function RegisterPage() {
                             <div className="relative">
                                 <Input
                                     id="password"
+                                    name="password"
                                     type={showPassword ? 'text' : 'password'}
-                                    value={password}
-                                    onChange={(e) => setPassword(e.target.value)}
                                     required
                                     placeholder="********"
                                     className="pr-10"
@@ -202,8 +211,7 @@ export default function RegisterPage() {
                                 <Input
                                     id="confirm-password"
                                     type={showPassword ? 'text' : 'password'}
-                                    value={confirmPassword}
-                                    onChange={(e) => setConfirmPassword(e.target.value)}
+                                    name="confirm-password"
                                     required
                                     placeholder="********"
                                     className="pr-10"
@@ -225,8 +233,7 @@ export default function RegisterPage() {
                                 <Input
                                     id="birth-day"
                                     type="number"
-                                    value={birthDay}
-                                    onChange={(e) => setBirthDay(e.target.value)}
+                                    name="birth-day"
                                     required
                                     placeholder="روز"
                                     className="w-1/3 text-center"
@@ -237,8 +244,7 @@ export default function RegisterPage() {
                                 <Input
                                     id="birth-month"
                                     type="number"
-                                    value={birthMonth}
-                                    onChange={(e) => setBirthMonth(e.target.value)}
+                                    name="birth-month"
                                     required
                                     placeholder="ماه"
                                     className="w-1/3 text-center"
@@ -249,8 +255,7 @@ export default function RegisterPage() {
                                 <Input
                                     id="birth-year"
                                     type="number"
-                                    value={birthYear}
-                                    onChange={(e) => setBirthYear(e.target.value)}
+                                    name="birth-year"
                                     required
                                     placeholder="سال"
                                     className="w-1/3 text-center"
@@ -272,7 +277,7 @@ export default function RegisterPage() {
                     {loading ? 'در حال ثبت نام...' : 'ثبت نام'}
                 </Button>
                 <p className="text-sm text-muted-foreground mt-4">
-                حساب کاربری دارید؟{' '}
+                    حساب کاربری دارید؟{' '}
                     <Link href="/login" className="text-primary hover:underline">
                         ورود کنید
                     </Link>
@@ -283,10 +288,12 @@ export default function RegisterPage() {
             <Drawer open={isDrawerOpen} onOpenChange={setIsDrawerOpen}>
                 <DrawerContent className="flex flex-col items-center justify-center p-6 text-center">
                     <DrawerHeader className="flex flex-col items-center justify-center text-center ">
-                        <SuccessIcon width={250} height={250}  className="mb-8 mx-auto" />
-                        <DrawerTitle className="text-2xl font-bold text-primary">ثبت نام با موفقیت انجام شد</DrawerTitle>
+                        <SuccessIcon width={250} height={250} className="mb-8 mx-auto"/>
+                        <DrawerTitle className="text-2xl font-bold text-primary">ثبت نام با موفقیت انجام
+                            شد</DrawerTitle>
                         <DrawerDescription className="text-muted-foreground mt-2">
-                            تبریک! ثبت نام شما با موفقیت انجام شد. می توانید از این برنامه با حساب کاربری خود استفاده کنید.
+                            تبریک! ثبت نام شما با موفقیت انجام شد. می توانید از این برنامه با حساب کاربری خود استفاده
+                            کنید.
                         </DrawerDescription>
                     </DrawerHeader>
                     <DrawerFooter className="w-full mt-6">
