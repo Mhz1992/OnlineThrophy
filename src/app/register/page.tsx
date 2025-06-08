@@ -15,11 +15,10 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/src/components/drawer';
-import {useMutation} from '@tanstack/react-query'; // New import for React Query
-import {toast} from 'sonner'; // New import for toast notifications
-
-import {SuccessIcon} from "@/features/common/assets/svg";
+import {useMutation} from '@tanstack/react-query';
+import {toast} from 'sonner';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
+import { apiClient } from '@/src/lib/apiClient'; // Import the new apiClient
 
 // Helper function for basic Shamsi date validation
 const isValidShamsiDate = (year: number, month: number, day: number): boolean => {
@@ -55,7 +54,7 @@ export default function RegisterPage() {
         setShowPassword((prev) => !prev);
     };
 
-    // Function to perform the registration API call
+    // Function to perform the registration API call using apiClient
     const registerUserApi = async (userData: {
         firstName: string;
         lastName: string;
@@ -64,50 +63,41 @@ export default function RegisterPage() {
         birthDate: string,
         email: string
     }) => {
-        // Use the proxied path instead of the direct external URL
-        console.log(userData)
-        const response = await fetch(`/api/backend/auth/signup`, {
+        // Pass isAuthRequest: true because this is a registration call, no token needed yet
+        return apiClient<{ success: boolean; message: string; data: string; status: string; dateTime: string }>('/auth/signup', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(
-                userData
-            ),
+            body: userData,
+            isAuthRequest: true, // Mark as an auth request so no token is sent with this request
         });
-
-        if (!response.ok) {
-            const errorData = await response.json();
-            throw new Error(errorData.message || 'ثبت نام ناموفق بود');
-        }
-        return response.json();
     };
 
     // React Query mutation hook
     const registerUser = useMutation({
         mutationFn: registerUserApi,
-        onSuccess: () => {
+        onSuccess: (response) => {
             setIsDrawerOpen(true);
-            // Optionally, you might want to clear the form fields here
-            // e.g., (document.getElementById('register-form') as HTMLFormElement)?.reset();
+            // If registration also returns a token and you want to auto-login, you could save it here:
+            // if (response.success && response.data) {
+            //     localStorage.setItem('authToken', response.data);
+            // }
         },
         onError: (err: Error) => {
-            setApiError(err.message); // Set the API error message to local state
-            toast.error(err.message); // Show a toast notification
+            setApiError(err.message);
+            toast.error(err.message);
         },
     });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        setApiError(''); // Clear previous API errors
-        setDateError(''); // Clear previous date validation errors
+        setApiError('');
+        setDateError('');
 
         const formData = new FormData(e.target as HTMLFormElement);
 
         const firstName = formData.get("name") as string;
         const lastName = formData.get("family") as string;
         const phoneNumber = convertDigitsToEnglish(formData.get("phone") as string);
-        const email = formData.get("email") as string; // 'email' is extracted but not sent to backend in original code
+        const email = formData.get("email") as string;
         const password = convertDigitsToEnglish(formData.get("password") as string);
         const confirmPassword = convertDigitsToEnglish(formData.get("confirm-password") as string);
         const birthDay = formData.get("birth-day") as string;
@@ -139,7 +129,7 @@ export default function RegisterPage() {
             return;
         }
 
-        const currentShamsiYear = 1402; // Placeholder for current Shamsi year
+        const currentShamsiYear = 1402;
         if (yearNum > currentShamsiYear || yearNum < 1300) {
             setDateError('سال تولد باید بین ۱۳۰۰ و سال جاری باشد.');
             return;
@@ -147,7 +137,6 @@ export default function RegisterPage() {
 
         const birthDate = `${yearNum}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
 
-        // Trigger the mutation with the collected data
         registerUser.mutate({firstName, lastName, phoneNumber, password, birthDate, email});
     };
 

@@ -8,9 +8,9 @@ import {Input} from "@/components/input";
 import {Button} from "@/components/ui/button";
 import {EyeIcon, EyeOffIcon} from '@/src/components/icons/EyeIcons';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
-import {useMutation} from '@tanstack/react-query'; // New import for React Query
-import {toast} from 'sonner'; // New import for toast notifications
-
+import {useMutation} from '@tanstack/react-query';
+import {toast} from 'sonner';
+import { apiClient } from '@/src/lib/apiClient'; // Import the new apiClient
 
 export default function LoginPage() {
     const [apiError, setApiError] = useState(''); // State for API-related errors
@@ -21,28 +21,30 @@ export default function LoginPage() {
         setShowPassword((prev) => !prev);
     };
 
-    // Function to perform the login API call
+    // Function to perform the login API call using apiClient
     const loginUserApi = async (credentials: { username: string; password: string }) => {
-        const response = await fetch('/api/backend/auth/login', { // Use proxied path
+        // Pass isAuthRequest: true because this is the login call itself, no token needed yet
+        return apiClient<{ success: boolean; message: string; data: string; status: string; dateTime: string }>('/auth/login', {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(credentials),
+            body: credentials,
+            isAuthRequest: true, // Mark as an auth request so no token is sent with this request
         });
-
-        if (!response.ok) {
-            const data = await response.json();
-            throw new Error(data.message || 'ورود ناموفق بود');
-        }
-        return response.json();
     };
 
     // React Query mutation hook
     const loginMutation = useMutation({
         mutationFn: loginUserApi,
-        onSuccess: () => {
-            router.push('/');
+        onSuccess: (response) => {
+            // Save the token to localStorage upon successful login
+            if (response.success && response.data) {
+                localStorage.setItem('authToken', response.data); // Save the token
+                toast.success(response.message || 'ورود موفقیت‌آمیز بود');
+                router.push('/'); // Redirect to home page
+            } else {
+                // Handle cases where success is false but response is still OK (e.g., custom API errors)
+                setApiError(response.message || 'ورود ناموفق بود');
+                toast.error(response.message || 'ورود ناموفق بود');
+            }
         },
         onError: (err: Error) => {
             setApiError(err.message); // Set the API error message to local state
