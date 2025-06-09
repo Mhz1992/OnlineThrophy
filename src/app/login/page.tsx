@@ -77,7 +77,9 @@ export default function LoginPage() {
         const password = convertDigitsToEnglish(formData.get("password") as string);
 
         // Trigger the mutation with the collected data
-        loginMutation.mutate({username, password});
+        if ( username && password){
+            loginMutation.mutate({username, password});
+        }
     };
 
     return (
