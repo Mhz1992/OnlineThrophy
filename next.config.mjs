@@ -22,12 +22,6 @@ const nextConfig = {
                 port: '',
                 pathname: '/**',
             },
-            {
-                protocol: 'https',
-                hostname: 'assets.example.com',
-                port: '',
-                pathname: '/account123/**',
-            },
         ],
     },
     webpack(config) {
@@ -62,10 +56,6 @@ const nextConfig = {
                 destination: 'http://farsi.voiceoversamples.com/:path*',
             },
             // NEW: Proxy backend API calls to bypass CORS
-            {
-                source: '/api/backend/:path*',
-                destination: 'http://185.97.118.183:8080/:path*',
-            },
         ];
     },
 };

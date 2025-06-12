@@ -1,71 +1,26 @@
 'use client';
 
 import React, {useState} from 'react';
-import {useRouter} from 'next/navigation';
 import {Label} from '@/components/ui/label';
 import Link from 'next/link';
 import {Input} from "@/components/input";
 import {Button} from "@/components/ui/button";
 import {EyeIcon, EyeOffIcon} from '@/src/components/icons/EyeIcons';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
-import {useMutation} from '@tanstack/react-query';
-import {toast} from 'sonner';
-import { apiClient } from '@/src/lib/apiClient'; // Import the new apiClient
+import {loginMutation} from "@/features/auth/api/login/hook"; // Import the new apiClient
 
 export default function LoginPage() {
     const [apiError, setApiError] = useState(''); // State for API-related errors
     const [showPassword, setShowPassword] = useState(false); // State for password visibility
-    const router = useRouter();
 
     const togglePasswordVisibility = () => {
         setShowPassword((prev) => !prev);
     };
 
     // Function to perform the login API call using apiClient
-    const loginUserApi = async (credentials: { username: string; password: string }) => {
-        // Pass isAuthRequest: true because this is the login call itself, no token needed yet
-        return apiClient<{ success: boolean; message: string; data: string; status: string; dateTime: string }>('/auth/login', {
-            method: 'POST',
-            body: credentials,
-            isAuthRequest: true, // Mark as an auth request so no token is sent with this request
-        });
-    };
+
 
     // React Query mutation hook
-    const loginMutation = useMutation({
-        mutationFn: loginUserApi,
-        onSuccess: async (response) => { // Made async to await cookie setting
-            // Save the token to localStorage upon successful login
-            if (response.success && response.data) {
-                localStorage.setItem('authToken', response.data); // Save the token
-
-                // Call the new API route to set the HTTP-only cookie
-                try {
-                    await fetch('/api/auth/set-token-cookie', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ token: response.data }),
-                    });
-                } catch (cookieError) {
-                    console.error('Failed to set token cookie:', cookieError);
-                    // Handle this error if necessary, but usually not critical for user flow
-                }
-
-                toast.success(response.message || 'ورود موفقیت‌آمیز بود');
-                router.push('/'); // Redirect to home page
-            } else {
-                // Handle cases where success is false but response is still OK (e.g., custom API errors)
-                setApiError(response.message || 'ورود ناموفق بود');
-                toast.error(response.message || 'ورود ناموفق بود');
-            }
-        },
-        onError: (err: Error) => {
-            setApiError(err.message); // Set the API error message to local state
-            toast.error(err.message); // Show a toast notification
-        },
-    });
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
