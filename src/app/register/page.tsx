@@ -15,11 +15,10 @@ import {
     DrawerHeader,
     DrawerTitle,
 } from '@/src/components/drawer';
-import {useMutation} from '@tanstack/react-query';
 import {toast} from 'sonner';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
-import { apiClient } from '@/src/lib/apiClient';
-import {SuccessIcon} from "@/features/common/assets/svg"; // Import the new apiClient
+import {SuccessIcon} from "@/features/common/assets/svg";
+import { useSignupMutation } from '@/features/auth/api';
 
 // Helper function for basic Shamsi date validation
 const isValidShamsiDate = (year: number, month: number, day: number): boolean => {
@@ -55,26 +54,7 @@ export default function RegisterPage() {
         setShowPassword((prev) => !prev);
     };
 
-    // Function to perform the registration API call using apiClient
-    const registerUserApi = async (userData: {
-        firstName: string;
-        lastName: string;
-        phoneNumber: string;
-        password: string;
-        birthDate: string,
-        email: string
-    }) => {
-        // Pass isAuthRequest: true because this is a registration call, no token needed yet
-        return apiClient<{ success: boolean; message: string; data: string; status: string; dateTime: string }>('/auth/signup', {
-            method: 'POST',
-            body: userData,
-            isAuthRequest: true, // Mark as an auth request so no token is sent with this request
-        });
-    };
-
-    // React Query mutation hook
-    const registerUser = useMutation({
-        mutationFn: registerUserApi,
+    const registerUser = useSignupMutation({
         onSuccess: () => {
             setIsDrawerOpen(true);
         },
@@ -109,10 +89,7 @@ export default function RegisterPage() {
         if (
             !birthDay ||
             !birthMonth ||
-            !birthYear ||
-            typeof birthDay !== "string" ||
-            typeof birthMonth !== "string" ||
-            typeof birthYear !== "string") {
+            !birthYear ) {
             setDateError('تاریخ تولد وارد شده معتبر نیست.');
             return;
         }
@@ -134,11 +111,19 @@ export default function RegisterPage() {
 
         const birthDate = `${yearNum}-${monthNum.toString().padStart(2, '0')}-${dayNum.toString().padStart(2, '0')}`;
 
-        registerUser.mutate({firstName, lastName, phoneNumber, password, birthDate, email});
+        // Map the form fields to the expected API request structure
+        registerUser.mutate({
+            first_name: firstName,
+            last_name: lastName,
+            phone: phoneNumber,
+            password,
+            birthdate: birthDate,
+            email
+        });
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
+        <div className="flex flex-col h-full bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
             {/* Header Section - Top */}
             <div className="text-right w-full max-w-md mx-auto mt-24">
                 <h1 className="text-2xl font-semibold">ثبت نام</h1>
