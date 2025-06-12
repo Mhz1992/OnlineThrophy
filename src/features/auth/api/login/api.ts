@@ -1,5 +1,4 @@
 import {apiClient} from "@/lib/apiClient";
-import { LoginRequest, LoginResponse } from "./types.d"; // Assuming these types are defined
 
 export const loginUserApi = async (credentials: LoginRequest) => {
     // Call apiClient directly and pass method in options

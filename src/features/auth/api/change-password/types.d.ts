@@ -1,14 +1,14 @@
-interface ChangePasswordRequest {
+type ChangePasswordRequest = {
     old_password: string;
     new_password: string;
 }
 
-interface ChangePasswordResponseData {
+type ChangePasswordResponseData = {
     access: string;
     refresh: string;
 }
 
-interface ChangePasswordResponse {
+type ChangePasswordResponse = {
     status: string;
     code: number;
     message: string;

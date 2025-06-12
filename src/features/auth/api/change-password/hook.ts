@@ -2,7 +2,6 @@ import { useMutation } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { changePasswordApi } from './api';
-import { ChangePasswordRequest, ChangePasswordResponse } from './types.d';
 
 interface UseChangePasswordMutationOptions {
     onSuccess?: (data: ChangePasswordResponse) => void;
