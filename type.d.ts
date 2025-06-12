@@ -1,1 +1,1 @@
-type ArrowType  <D , R> = (_data : D) => R 
+type ArrowType  <D , R> = (_data : D) => R

@@ -1,5 +1,5 @@
 import {useQuery, useMutation, useQueryClient} from '@tanstack/react-query';
-import {fetchProfileApi, updateProfileApi} from './index';
+import {fetchProfileApi, updateProfileApi} from './api';
 import {toast} from 'sonner';
 
 // Hook for fetching profile data

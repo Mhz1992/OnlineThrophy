@@ -1,24 +1,13 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import {toPersianNumber} from "@/lib/utils";
+import {getPersianDate} from "@/core/utils/getPersianDate";
 
 interface PerformanceCardProps {
     title: string;
     score: number;
     timestamp: number; // Epoch time in milliseconds
 }
-
-// Helper function to format timestamp to Persian date
-const formatPersianDate = (timestamp: number) => {
-    const date = new Date(timestamp);
-    // Using 'fa-IR' locale for Persian numbers and month names
-    const options: Intl.DateTimeFormatOptions = {
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric',
-    };
-    return new Intl.DateTimeFormat('fa-IR', options).format(date);
-};
 
 export const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, score, timestamp }) => {
     return (
@@ -30,7 +19,7 @@ export const PerformanceCard: React.FC<PerformanceCardProps> = ({ title, score, 
                         {title}
                     </CardTitle>
                     <p className="text-sm text-muted-foreground">
-                        {formatPersianDate(timestamp)}
+                        {getPersianDate(timestamp)}
                     </p>
                 </div>
             </CardHeader>

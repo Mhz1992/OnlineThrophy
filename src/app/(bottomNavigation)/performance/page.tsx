@@ -20,8 +20,8 @@ import {
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import {danaFont} from "@/lib/utils";
-import { usePerformanceData } from '@/features/performance/api/hook'; // Import the new hook
-import { PerformanceApiResponse } from '@/features/performance/api/types.d'; // Import the specific type
+import {usePerformanceQuery} from "@/features/performance/api/hooks";
+import {getPersianDate} from "@/core/utils/getPersianDate";
 
 // Register Chart.js components
 ChartJS.register(
@@ -46,15 +46,9 @@ if (ChartJS.defaults.font.family !== danaFont.style.fontFamily) {
 }
 ChartJS.defaults.color = FOREGROUND_COLOR; // Default text color for chart elements
 
-// Helper function to get Persian month name for chart X-axis
-const getPersianMonthName = (timestamp: number) => {
-    const date = new Date(timestamp);
-    return new Intl.DateTimeFormat('fa-IR', { month: 'long' }).format(date);
-};
-
 export default function PerformancePage() {
     // Use the new usePerformanceData hook
-    const { data, isLoading, isError } = usePerformanceData();
+    const { data, isLoading, isError } = usePerformanceQuery();
 
     if (isError) {
         return (
@@ -65,12 +59,12 @@ export default function PerformancePage() {
         );
     }
 
-    const performanceEntries = data?.data || [];
+    const performanceEntries = data || [];
 
     // Prepare data for Chart.js
-    const sortedEntries = performanceEntries.sort((a, b) => a.timestamp - b.timestamp);
+    const sortedEntries = performanceEntries.sort((a, b) => a.inserted_dt - b.inserted_dt);
 
-    const chartLabels = sortedEntries.map((entry) => getPersianMonthName(entry.timestamp));
+    const chartLabels = sortedEntries.map((entry) => getPersianDate(entry.inserted_dt));
     const chartScores = sortedEntries.map((entry) => entry.score);
 
     const chartJsData = {
@@ -120,10 +114,10 @@ export default function PerformancePage() {
                     label: function(context: TooltipItem<'line'>) {
                         const entryIndex = context.dataIndex;
                         const originalEntry = sortedEntries[entryIndex];
-                        const formattedDate = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(originalEntry.timestamp));
+                        const formattedDate = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(originalEntry.inserted_dt));
                         // Format score to Persian number
                         const persianScore = new Intl.NumberFormat('fa-IR').format(originalEntry.score);
-                        return `${originalEntry.title} - امتیاز: ${persianScore} (${formattedDate})`;
+                        return `${originalEntry.exam_type_title} - امتیاز: ${persianScore} (${formattedDate})`;
                     }
                 },
                 backgroundColor: BACKGROUND_COLOR, // Hardcoded background color
@@ -203,9 +197,9 @@ export default function PerformancePage() {
                             performanceEntries.map((entry) => (
                                 <PerformanceCard
                                     key={entry.id}
-                                    title={entry.title}
+                                    title={entry.exam_type_title}
                                     score={entry.score}
-                                    timestamp={entry.timestamp}
+                                    timestamp={entry.inserted_dt}
                                 />
                             ))
                         ) : (
