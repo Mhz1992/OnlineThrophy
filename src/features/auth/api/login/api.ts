@@ -1,7 +1,8 @@
 import {apiClient} from "@/lib/apiClient";
+import { LoginRequest, LoginResponse } from "./types.d"; // Assuming these types are defined
 
 export const loginUserApi = async (credentials: LoginRequest) => {
-    // Pass isAuthRequest: true because this is the login call itself, no token needed yet
+    // Call apiClient directly and pass method in options
     return apiClient<LoginResponse>('/api/auth/login/', {
         method: 'POST',
         body: credentials,

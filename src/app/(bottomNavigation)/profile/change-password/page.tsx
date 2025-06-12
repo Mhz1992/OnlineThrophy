@@ -8,7 +8,6 @@ import { EyeIcon, EyeOffIcon } from '@/src/components/icons/EyeIcons';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import { toast } from 'sonner';
 import { useChangePasswordMutation } from '@/features/auth/api/change-password/hook'; // Import the new hook
 
 // Define the schema for form validation
@@ -32,7 +31,6 @@ export default function ChangePasswordPage() {
         register,
         handleSubmit,
         formState: { errors },
-        setError,
         reset,
     } = useForm<ChangePasswordFormValues>({
         resolver: zodResolver(changePasswordSchema),
@@ -41,12 +39,6 @@ export default function ChangePasswordPage() {
     const changePasswordMutation = useChangePasswordMutation({
         onSuccess: () => {
             reset(); // Clear form fields on success
-        },
-        onError: (error) => {
-            // The hook already shows a toast, but you can set specific form errors if needed
-            setError('old_password', { type: 'manual', message: error.message });
-            setError('new_password', { type: 'manual', message: error.message });
-            setError('confirm_password', { type: 'manual', message: error.message });
         },
     });
 
