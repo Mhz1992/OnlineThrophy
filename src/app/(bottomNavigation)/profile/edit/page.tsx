@@ -88,7 +88,7 @@ export default function EditProfilePage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
+        <div className="flex flex-col h-full bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
             {/* Header Section - Top */}
             <div className="text-right w-full  mx-auto mt-8">
                 <h1 className="text-2xl font-semibold">ویرایش پروفایل</h1>

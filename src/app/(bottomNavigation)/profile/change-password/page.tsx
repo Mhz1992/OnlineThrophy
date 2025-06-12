@@ -105,7 +105,7 @@ export default function ChangePasswordPage() {
     };
 
     return (
-        <div className="flex flex-col min-h-screen bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
+        <div className="flex flex-col h-full bg-gray-100 dark:bg-gray-900 px-4 py-8 justify-between">
             <div className="text-right w-full mx-auto mt-8">
                 <h1 className="text-2xl font-semibold">تغییر رمز عبور</h1>
                 <p className="text-muted-foreground mt-2">این صفحه برای تغییر رمز عبور حساب کاربری شماست.</p>
