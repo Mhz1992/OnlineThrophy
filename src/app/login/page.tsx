@@ -7,7 +7,7 @@ import {Input} from "@/components/input";
 import {Button} from "@/components/ui/button";
 import {EyeIcon, EyeOffIcon} from '@/src/components/icons/EyeIcons';
 import {convertDigitsToEnglish} from "@/core/utils/convertDigitsToEnglish";
-import {loginMutation} from "@/features/auth/api/login/hook"; // Import the new apiClient
+import {useLoginMutation} from "@/features/auth/api/login/hook"; // Corrected import to use the hook
 
 export default function LoginPage() {
     const [apiError, setApiError] = useState(''); // State for API-related errors
@@ -17,10 +17,22 @@ export default function LoginPage() {
         setShowPassword((prev) => !prev);
     };
 
-    // Function to perform the login API call using apiClient
-
-
     // React Query mutation hook
+    const loginMutation = useLoginMutation({
+        onError: (error) => {
+            // This callback will be called if the mutation fails
+            let errorMessage = 'خطا در ورود به حساب کاربری';
+            if (error instanceof Error) {
+                errorMessage = error.message;
+            }
+            setApiError(errorMessage);
+        },
+        onSettled: () => {
+            // This callback will be called regardless of success or failure
+            // You might want to clear loading states or perform other actions here
+        }
+    });
+
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
