@@ -48,7 +48,13 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => { // Defi
             options?.onSuccess?.(response); // Call custom onSuccess callback if provided
         },
         onError: (err: Error) => {
-            toast.error(err.message); // Show a toast notification
+            // Display the error message from Django in a toast notification
+            // The message has already been extracted and formatted by the apiClient
+            const errorMessage = err.message || 'ورود ناموفق بود';
+            toast.error(errorMessage, {
+                duration: 5000, // Show for 5 seconds to give users time to read longer error messages
+                position: 'top-center',
+            });
             options?.onError?.(err); // Call custom onError callback if provided
         },
         onSettled: options?.onSettled,

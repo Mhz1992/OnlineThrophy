@@ -43,7 +43,13 @@ export const useSignupMutation = (options?: UseSignupMutationOptions) => {
             options?.onSuccess?.(response);
         },
         onError: (err: Error) => {
-            toast.error(err.message);
+            // Display the error message from Django in a toast notification
+            // The message has already been extracted and formatted by the apiClient
+            const errorMessage = err.message || 'ثبت نام ناموفق بود';
+            toast.error(errorMessage, {
+                duration: 5000, // Show for 5 seconds to give users time to read longer error messages
+                position: 'top-center',
+            });
             options?.onError?.(err);
         },
         onSettled: options?.onSettled,

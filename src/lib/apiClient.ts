@@ -142,6 +142,30 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
         if (!response.ok) {
             const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
 
+            // Extract error message from Django response format
+            let errorMessage = 'An unknown error occurred';
+            if (errorData) {
+                if (errorData.message) {
+                    // Standard message format
+                    errorMessage = errorData.message;
+                } else if (errorData.detail) {
+                    // Django often uses 'detail' for non-field errors
+                    errorMessage = errorData.detail;
+                } else if (typeof errorData === 'object') {
+                    // Django field errors format: {"field_name": ["error message"]}
+                    const fieldErrors = Object.entries(errorData)
+                        .filter(([key, value]) => Array.isArray(value) || typeof value === 'string')
+                        .map(([key, value]) => {
+                            const errorValue = Array.isArray(value) ? value.join(', ') : value;
+                            return `${key}: ${errorValue}`;
+                        });
+
+                    if (fieldErrors.length > 0) {
+                        errorMessage = fieldErrors.join(' | ');
+                    }
+                }
+            }
+
             // If we get a 403 and we're not already trying to refresh the token, attempt to refresh
             if (response.status === 403 && !skipRefreshToken && !isAuthRequest) {
                 try {
@@ -156,17 +180,17 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                 } catch (refreshError) {
                     console.log(refreshError)
                     // If refresh fails, throw the original error
-                    throw new AuthError(errorData.message || 'Authentication failed or forbidden', response.status);
+                    throw new AuthError(errorMessage || 'Authentication failed or forbidden', response.status);
                 }
             }
 
             // Throw AuthError for 401 or 403 responses
             if (response.status === 401 || response.status === 403) {
-                throw new AuthError(errorData.message || 'Authentication failed or forbidden', response.status);
+                throw new AuthError(errorMessage || 'Authentication failed or forbidden', response.status);
             }
 
-            // For other non-OK responses, throw a generic Error
-            throw new Error(errorData.message || `API Error: ${response.statusText}`);
+            // For other non-OK responses, throw a generic Error with the extracted message
+            throw new Error(errorMessage || `API Error: ${response.statusText}`);
         }
 
         // For void return types or empty responses, don't try to parse JSON
