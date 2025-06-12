@@ -1,10 +1,8 @@
 'use client';
 
 import React from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Skeleton } from '@/components/skeleton';
-import { PerformanceApiResponse } from '@/types/api';
 import { PerformanceCard } from '@/features/performance/components/PerformanceCard';
 import {
     Chart as ChartJS,
@@ -15,13 +13,15 @@ import {
     Title,
     Tooltip as ChartJSTooltip,
     Legend,
-    TooltipItem, // Import TooltipItem
-    ScriptableContext, // Import ScriptableContext
-    Scale, // Import Scale for the callback type
-    CoreScaleOptions, // Import CoreScaleOptions for the callback type
+    TooltipItem,
+    ScriptableContext,
+    Scale,
+    CoreScaleOptions,
 } from 'chart.js';
 import { Line } from 'react-chartjs-2';
 import {danaFont} from "@/lib/utils";
+import { usePerformanceData } from '@/features/performance/api/hook'; // Import the new hook
+import { PerformanceApiResponse } from '@/features/performance/api/types.d'; // Import the specific type
 
 // Register Chart.js components
 ChartJS.register(
@@ -53,16 +53,8 @@ const getPersianMonthName = (timestamp: number) => {
 };
 
 export default function PerformancePage() {
-    const { data, isLoading, isError } = useQuery<PerformanceApiResponse, Error>({
-        queryKey: ['performanceData'],
-        queryFn: async () => {
-            const response = await fetch('/api/performance'); // Removed double await
-            if (!response.ok) {
-                throw new Error('Failed to fetch performance data');
-            }
-            return response.json();
-        },
-    });
+    // Use the new usePerformanceData hook
+    const { data, isLoading, isError } = usePerformanceData();
 
     if (isError) {
         return (
@@ -161,7 +153,7 @@ export default function PerformancePage() {
                 ticks: {
                     color: FOREGROUND_COLOR, // Hardcoded foreground color
                     // Format Y-axis numbers to Persian
-                    callback: function(this: Scale<CoreScaleOptions>, value: string | number) { // Removed unused 'index' and 'ticks' parameters
+                    callback: function(this: Scale<CoreScaleOptions>, value: string | number) {
                         const numericValue = typeof value === 'string' ? parseFloat(value) : value;
                         return new Intl.NumberFormat('fa-IR').format(numericValue);
                     }
