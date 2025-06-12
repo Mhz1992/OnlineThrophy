@@ -1,11 +1,8 @@
 import {apiClient} from "@/lib/apiClient";
 
-export const logoutUserApi = async (refresh: { refresh: string }) => {
-    // No request body needed for logout
+export const logoutUserApi = async (data: LogoutRequest) => {
     return apiClient<LogoutResponse>('/api/auth/logout/', {
         method: 'POST',
-        body: {
-            refresh: refresh
-        }
+        body: data
     });
 };

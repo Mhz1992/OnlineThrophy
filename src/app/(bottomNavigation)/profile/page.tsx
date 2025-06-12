@@ -39,7 +39,11 @@ export default function ProfilePage() {
     const handleConfirmLogout = () => {
         setLoadingLogout(true);
         // Call the logout API
-        logoutMutation.mutate({});
+        const refreshToken =  localStorage.getItem("refreshToken")
+        if (refreshToken){
+            logoutMutation.mutate({refresh:refreshToken});
+        }
+
     };
 
     const handleNotificationToggle = async (checked: boolean) => {

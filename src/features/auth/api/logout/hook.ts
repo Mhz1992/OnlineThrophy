@@ -14,8 +14,8 @@ export const useLogoutMutation = (options?: UseLogoutMutationOptions) => {
 
     return useMutation<LogoutResponse, Error, LogoutRequest>({
         mutationFn: logoutUserApi,
-        onSuccess: async (response: LogoutResponse) => {
-            if (response && response.success) {
+        onSuccess: async (response: LogoutResponse ) => {
+            if (response ) {
                 // Clear tokens from localStorage
                 localStorage.removeItem('accessToken');
                 localStorage.removeItem('authToken');
@@ -37,7 +37,7 @@ export const useLogoutMutation = (options?: UseLogoutMutationOptions) => {
                 router.push('/login'); // Redirect to login page
             } else {
                 // This branch handles cases where the API might return a 200 OK but with a logical error message
-                const errorMessage = response.message || 'خروج ناموفق بود';
+                const errorMessage = 'خروج ناموفق بود';
                 toast.error(errorMessage);
                 options?.onError?.(new Error(errorMessage));
             }
