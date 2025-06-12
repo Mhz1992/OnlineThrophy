@@ -53,8 +53,9 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
         config.body = JSON.stringify(body);
     }
 
-    // Use the proxied path for all backend calls as configured in next.config.mjs
-    const fullUrl = `/api/backend${url}`;
+    // Use the baseURL from environment variables if available, otherwise use the proxied path
+    const baseUrl = process.env.BACKEND_CORE_URL || '/api/backend';
+    const fullUrl = `${baseUrl}${url}`;
 
     const response = await fetch(fullUrl, config);
 

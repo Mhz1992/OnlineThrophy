@@ -2,7 +2,6 @@ import { useMutation } from "@tanstack/react-query";
 import { toast } from "sonner";
 import { useRouter } from 'next/navigation'; // Import useRouter
 import { loginUserApi } from "./api"; // Assuming this is where loginUserApi is defined
-import { LoginRequest, LoginResponse } from "./types.d"; // Assuming types.d defines LoginRequest and LoginResponse
 
 interface UseLoginMutationOptions {
     onSuccess?: (data: LoginResponse) => void; // Allow custom onSuccess callback
@@ -39,7 +38,7 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => { // Defi
                 router.push('/home'); // Redirect to home page
             } else {
                 // This branch handles cases where the API might return a 200 OK but with a logical error message
-                const errorMessage = response.message || 'ورود ناموفق بود';
+                const errorMessage = 'ورود ناموفق بود';
                 toast.error(errorMessage);
                 options?.onError?.(new Error(errorMessage)); // Pass error to custom onError
             }
