@@ -169,6 +169,12 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
             throw new Error(errorData.message || `API Error: ${response.statusText}`);
         }
 
+        // For void return types or empty responses, don't try to parse JSON
+        if (response.headers.get('content-length') === '0' || response.status === 204) {
+            return {} as T;
+        }
+
+        // Otherwise parse the JSON response
         return response.json();
     } catch (error) {
         // Re-throw AuthErrors
