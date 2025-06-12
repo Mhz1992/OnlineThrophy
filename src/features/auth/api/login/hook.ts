@@ -16,12 +16,15 @@ export const useLoginMutation = (options?: UseLoginMutationOptions) => { // Defi
         mutationFn: loginUserApi,
         onSuccess: async (response: LoginResponse) => {
             if (response && response.access) {
-                localStorage.setItem('authToken', response.access); // Use 'authToken' for consistency
+                // Store tokens in localStorage with consistent naming
+                localStorage.setItem('accessToken', response.access); // Primary storage key
+                localStorage.setItem('authToken', response.access); // For backward compatibility
+
                 if (response.refresh) {
-                    localStorage.setItem('refreshToken', response.refresh); // Store refresh token
+                    localStorage.setItem('refreshToken', response.refresh);
                 }
 
-                // Call the new API route to set the HTTP-only cookie
+                // Call the API route to set the HTTP-only cookies
                 try {
                     await fetch('/api/auth/set-token-cookie', {
                         method: 'POST',

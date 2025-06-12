@@ -1,8 +1,3 @@
-import { URL_LOGIN } from '@/src/lib/constants/constants/routes';
+export * from './login';
+export * from './logout';
 
-export const login = (data: never): Promise<Response> => {
-    const res = fetch(`/api/${URL_LOGIN}`, {
-        body: data,
-    });
-    return res;
-};

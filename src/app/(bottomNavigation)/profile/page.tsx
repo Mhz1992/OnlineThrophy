@@ -11,6 +11,7 @@ import {toast} from 'sonner';
 import {LogoutConfirmDrawer} from "@/features/drawers/LogoutConfirmDrawer";
 import {CallSupportDrawer} from "@/features/drawers/CallSupportDrawer";
 import {ArrowLIcon} from "@/features/common/assets/svg";
+import {useLogoutMutation} from "@/features/auth/api/logout";
 
 
 export default function ProfilePage() {
@@ -23,20 +24,22 @@ export default function ProfilePage() {
 
     const SUPPORT_PHONE_NUMBER = '02112345678'; // Example support phone number
 
+    // Initialize the logout mutation
+    const logoutMutation = useLogoutMutation({
+        onSettled: () => {
+            setLoadingLogout(false);
+            setIsLogoutDrawerOpen(false);
+        }
+    });
+
     const handleLogout = () => {
         setIsLogoutDrawerOpen(true);
     };
 
     const handleConfirmLogout = () => {
         setLoadingLogout(true);
-        // Simulate API call or actual logout process
-        setTimeout(() => {
-            console.log('User logged out');
-            // In a real application, you would clear tokens, session, etc.
-            router.push('/login');
-            setLoadingLogout(false);
-            setIsLogoutDrawerOpen(false);
-        }, 1000);
+        // Call the logout API
+        logoutMutation.mutate({});
     };
 
     const handleNotificationToggle = async (checked: boolean) => {
