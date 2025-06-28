@@ -3,10 +3,9 @@
 import React from 'react';
 import { Button } from '@/components/button';
 import { cn, toPersianNumber } from '@/lib/utils';
-import { Question } from '@/types/api';
 
 interface QuestionDisplayProps {
-    question: Question;
+    question: ExamQuestion;
     questionNumber: number;
     totalQuestions: number;
     currentAnswer: string | string[]; // Changed from selectedAnswerId, now supports string or array of strings
@@ -20,8 +19,6 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
     currentAnswer, // Changed prop name
     onAnswerChange, // Changed prop name
 }) => {
-    const sortedChoices = question.choices?.sort((a, b) => a.priority - b.priority) || [];
-
     const handleChoiceClick = (choiceId: string) => {
         if (question.type === 'single-choice') {
             // For single-choice, set the selected choice ID
@@ -43,7 +40,7 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                 {toPersianNumber(questionNumber)}/{toPersianNumber(totalQuestions)}
             </div>
             <h3 className="text-lg font-semibold mb-6 text-right text-gray-900 dark:text-gray-100">
-                {question.text}
+                {question.context}
             </h3>
 
             <h4 className="text-primary font-bold text-right mb-4">
@@ -51,7 +48,7 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
             </h4>
 
             <div className="space-y-3 mb-8">
-                {sortedChoices.map((choice, index) => {
+                {question.answers.map((choice, index) => {
                     let isSelected = false;
                     if (question.type === 'single-choice') {
                         isSelected = currentAnswer === choice.id;
@@ -76,7 +73,7 @@ export const QuestionDisplay: React.FC<QuestionDisplayProps> = ({
                             )}>
                                 {toPersianNumber(index + 1)}
                             </span>
-                            <span className="flex-1">{choice.text}</span>
+                            <span className="flex-1">{choice.context}</span>
                         </Button>
                     );
                 })}

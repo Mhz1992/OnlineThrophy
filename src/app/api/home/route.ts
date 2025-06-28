@@ -7,7 +7,7 @@ const MOCK_SESSIONS: TrophySession[] = [
         id: 'session-a',
         title: 'آشنایی با روان‌درمانی',
         description: 'جلسه اول: معرفی روش‌ها و اهداف درمان',
-        slug: 'therapy-intro', // This slug must match the one in sessions/[slug]/route.ts
+        slug: 'therapy-intro', // This slug must match the one in sessions/[exam_id]/route.ts
         contents: [],
         status:"viewed"
     },

@@ -1,8 +1,8 @@
 import React from 'react';
 import { Question } from '@/types/api'; // Removed Choice
-import { RadioGroup, RadioGroupItem } from '@/src/components/ui/radio-group';
-import { Label } from '@/src/components/ui/label';
-import { Checkbox } from '@/src/components/ui/checkbox';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Checkbox } from '@/components/ui/checkbox';
 import {Input} from "@/components/input";
 
 interface ExamQuestionProps {

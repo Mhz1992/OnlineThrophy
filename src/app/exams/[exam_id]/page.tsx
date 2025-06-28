@@ -1,37 +1,26 @@
 'use client';
 
-import React, { useState, useEffect } from 'react'; // Added useEffect
-import { useRouter } from 'next/navigation';
-import { useQuery } from '@tanstack/react-query';
-import { Button } from '@/components/button';
-import { ArrowLIcon } from "@/features/common/assets/svg";
-import { QuestionDisplay } from '@/components/features/exams/QuestionDisplay';
-import { Exam } from '@/types/api';
-import { cn } from '@/lib/utils';
-import { ExamQuestionSkeleton } from '@/features/skeleton/ExamQuestionSkeleton';
-import { ExamCompletionDrawer } from '@/features/drawers/ExamCompletionDrawer';
+import React, {useEffect, useState} from 'react'; // Added useEffect
+import {useRouter} from 'next/navigation';
+import {Button} from '@/components/button';
+import {ArrowLIcon} from "@/features/common/assets/svg";
+import {QuestionDisplay} from '@/features/exam/components/QuestionDisplay';
+import {cn} from '@/lib/utils';
+import {ExamQuestionSkeleton} from '@/features/skeleton/ExamQuestionSkeleton';
+import {ExamCompletionDrawer} from '@/features/drawers/ExamCompletionDrawer';
+import {useExamQuestionAndAnswers} from "@/features/exam/api/hooks";
 
 interface ExamPageProps {
     params: Promise<{
-        slug: string;
+        exam_id: string;
     }>;
 }
 
-export default function ExamPage({ params }: ExamPageProps) {
+export default function ExamPage({params}: ExamPageProps) {
     const router = useRouter();
-    const { slug } = React.use(params);
+    const {exam_id} = React.use(params);
 
-    const { data: examData, isLoading, isError } = useQuery<Exam, Error>({
-        queryKey: ['exam', slug],
-        queryFn: async () => {
-            const response = await fetch(`/api/exams/${slug}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch exam data');
-            }
-            return response.json();
-        },
-        // Removed onSuccess from here
-    });
+    const {data: examData, isLoading, isError} = useExamQuestionAndAnswers(exam_id)
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
     const [userAnswers, setUserAnswers] = useState<Record<string, string | string[]>>({});
@@ -41,15 +30,15 @@ export default function ExamPage({ params }: ExamPageProps) {
     useEffect(() => {
         if (examData) {
             const initialAnswers: Record<string, string | string[]> = {};
-            examData.questions.forEach(q => {
-                initialAnswers[q.id] = q.type === 'multi-choice' ? [] : '';
+            examData.forEach(question => {
+                initialAnswers[question.id] = question.type === 'multi-choice' ? [] : '';
             });
             setUserAnswers(initialAnswers);
         }
     }, [examData]); // Depend on examData
 
-    const currentQuestion = examData?.questions[currentQuestionIndex];
-    const totalQuestions = examData?.questions.length || 0;
+    const currentQuestion = examData && examData[currentQuestionIndex];
+    const totalQuestions = examData?.length || 0;
     const isLastQuestion = currentQuestionIndex === totalQuestions - 1;
 
     const handleAnswerChange = (questionId: string, answer: string | string[]) => {
@@ -82,7 +71,8 @@ export default function ExamPage({ params }: ExamPageProps) {
 
     return (
         <div className="flex flex-col h-full">
-            <header className="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-700 px-4">
+            <header
+                className="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-700 px-4">
                 <h1 className="text-xl font-bold text-right">آزمون اصلی</h1>
                 <Button
                     variant="ghost"
@@ -90,13 +80,13 @@ export default function ExamPage({ params }: ExamPageProps) {
                     className="flex items-center gap-2 text-primary dark:text-primary-foreground"
                 >
                     <span>خروج</span>
-                    <ArrowLIcon height={20} width={20} className={cn("text-primary dark:text-primary-foreground")} />
+                    <ArrowLIcon height={20} width={20} className={cn("text-primary dark:text-primary-foreground")}/>
                 </Button>
             </header>
 
             <main className="flex-1 overflow-y-auto p-4">
                 {isLoading ? (
-                    <ExamQuestionSkeleton />
+                    <ExamQuestionSkeleton/>
                 ) : currentQuestion ? (
                     <QuestionDisplay
                         question={currentQuestion}
