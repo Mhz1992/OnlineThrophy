@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react'; // Added useEffect
+import React, {use, useEffect, useState} from 'react'; // Added useEffect
 import {useRouter} from 'next/navigation';
 import {Button} from '@/components/button';
 import {ArrowLIcon} from "@/features/common/assets/svg";
@@ -8,7 +8,7 @@ import {QuestionDisplay} from '@/features/exam/components/QuestionDisplay';
 import {cn} from '@/lib/utils';
 import {ExamQuestionSkeleton} from '@/features/skeleton/ExamQuestionSkeleton';
 import {ExamCompletionDrawer} from '@/features/drawers/ExamCompletionDrawer';
-import {useExamQuestionAndAnswers} from "@/features/exam/api/hooks";
+import {useExamQuestionAndAnswers, useSubmitExamData} from "@/features/exam/api/hooks";
 
 interface ExamPageProps {
     params: Promise<{
@@ -23,9 +23,12 @@ export default function ExamPage({params}: ExamPageProps) {
     const {data: examData, isLoading, isError} = useExamQuestionAndAnswers(exam_id)
 
     const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-    const [userAnswers, setUserAnswers] = useState<Record<string, string | string[]>>({});
+    const [userAnswers, setUserAnswers] = useState<{ [key: string]: string | string[] }>({});
     const [isExamFinishedDrawerOpen, setIsExamFinishedDrawerOpen] = useState(false);
+    const submitExam = useSubmitExamData({
+        onSuccess: () => setIsExamFinishedDrawerOpen(true)
 
+    })
     // Use useEffect to initialize userAnswers when examData is loaded
     useEffect(() => {
         if (examData) {
@@ -50,8 +53,19 @@ export default function ExamPage({params}: ExamPageProps) {
 
     const handleNextQuestion = () => {
         if (isLastQuestion) {
-            console.log("Exam finished! User Answers:", userAnswers);
-            setIsExamFinishedDrawerOpen(true);
+            const userAnswerData = Object.entries(userAnswers).map(([key, value]) => {
+                // You can manipulate the key and value as needed here
+                return {
+                    question_id: key,
+                    selected_answer_id: value
+                };
+            });
+            const submitExamData = {
+                exam_id: exam_id,
+                answers: userAnswerData,
+            }
+            submitExam.mutate(submitExamData)
+
         } else {
             setCurrentQuestionIndex((prev) => prev + 1);
         }

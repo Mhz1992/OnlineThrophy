@@ -26,7 +26,7 @@ export const ExamCompletionDrawer: React.FC<ExamCompletionDrawerProps> = ({open,
 
     const handleReturnToHome = () => {
         onOpenChange(false);
-        router.push('/');
+        router.replace('/');
     };
 
     return (
