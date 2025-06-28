@@ -5,17 +5,16 @@ import { useRouter } from 'next/navigation';
 import { BookOpen2Icon, EyeIcon, KeyIcon, LockIcon } from "@/features/common/assets/svg";
 import { cn } from "@/lib/utils";
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { SessionStatus } from '@/types/api';
 import { toast } from 'sonner';
 
 interface SessionCardProps {
     title: string;
     description: string;
     link: string;
-    status: SessionStatus;
+    status: string;
 }
 
-export const SessionCard: React.FC<SessionCardProps> = ({ title, description, link, status }) => {
+export const TherapySessionCard: React.FC<SessionCardProps> = ({ title, description, link, status }) => {
     const router = useRouter();
 
     const StatusIcon = () => {

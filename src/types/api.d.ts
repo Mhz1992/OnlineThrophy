@@ -56,8 +56,6 @@ export interface ExamResult {
 
 export type ContentType = 'text' | 'image' | 'video' | 'link' | 'voice';
 
-// Define SessionStatus here as a core API type
-export type SessionStatus = 'open' | 'locked' | 'viewed';
 
 export interface SessionContent {
     id: UniqueId;
