@@ -1,4 +1,4 @@
-import {useMutation, useQuery, useQueryClient} from '@tanstack/react-query';
+import {useMutation, useQuery} from '@tanstack/react-query';
 import {fetchExamQuestionAndAnswerApi, submitExamQuestionApi} from './api';
 import {toast} from "sonner";
 

@@ -1,5 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { apiClient } from '@/lib/apiClient';
+import {NextRequest, NextResponse} from 'next/server';
 
 export async function POST(request: NextRequest) {
     try {

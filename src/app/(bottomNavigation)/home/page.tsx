@@ -1,6 +1,6 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React, {useState} from 'react';
 import {NotificationIcon} from "@/features/common/assets/svg";
 import {NotificationDrawer} from "@/features/drawers/NotificationDrawer";
 import {Skeleton} from "@/components/skeleton";

@@ -1,6 +1,6 @@
 'use client';
 
-import React, {use, useEffect, useState} from 'react'; // Added useEffect
+import React, {useEffect, useState} from 'react'; // Added useEffect
 import {useRouter} from 'next/navigation';
 import {Button} from '@/components/button';
 import {ArrowLIcon} from "@/features/common/assets/svg";
