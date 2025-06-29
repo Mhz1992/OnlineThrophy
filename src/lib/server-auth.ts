@@ -13,30 +13,6 @@ export interface User {
 // In a real application, this would be replaced with a proper database.
 const users: User[] = [];
 
-// Seed initial users
-async function seedUsers() {
-    if (users.length === 0) {
-        const adminPasswordHash = await hashPassword('admin');
-        users.push({
-            id: 'admin-id',
-            name: 'Admin',
-            family: 'User',
-            phone: '09123456789', // Example phone number for admin
-            passwordHash: adminPasswordHash,
-        });
-
-        const userPasswordHash = await hashPassword('pass');
-        users.push({
-            id: 'user-id',
-            name: 'Regular',
-            family: 'User',
-            phone: '09000000000', // Example phone number for regular user
-            passwordHash: userPasswordHash,
-        });
-        console.log('Initial users seeded: admin:admin, user:pass');
-    }
-}
-seedUsers(); // Call seed function on module load
 
 export async function hashPassword(password: string): Promise<string> {
     const salt = await bcrypt.genSalt(10);
