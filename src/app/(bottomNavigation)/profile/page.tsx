@@ -1,7 +1,6 @@
 'use client';
 
 import React, {useState} from 'react';
-import {useRouter} from 'next/navigation';
 import Link from 'next/link';
 import {Button} from '@/components/ui/button';
 import {Switch} from '@/components/ui/switch';
@@ -15,7 +14,6 @@ import {useLogoutMutation} from "@/features/auth/api/logout";
 
 
 export default function ProfilePage() {
-    const router = useRouter();
     const [isNotificationsEnabled, setIsNotificationsEnabled] = useState(true);
     const [isNotificationUpdating, setIsNotificationUpdating] = useState(false);
     const [isLogoutDrawerOpen, setIsLogoutDrawerOpen] = useState(false);
