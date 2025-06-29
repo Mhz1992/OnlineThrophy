@@ -1,29 +1,13 @@
 import { NextResponse } from 'next/server';
-import { serialize } from 'cookie';
+import { cookies } from 'next/headers'; // Import cookies from next/headers
 
 export async function POST() {
-    // Create cookies array to hold all cookies to be cleared
-    const cookies = [];
+    const cookieStore = cookies(); // Get the cookies instance
 
-    // Clear all token cookies by setting their maxAge to 0 and an empty value
-    const cookieNames = ['token', 'accessToken', 'refreshToken'];
+    // Delete each token cookie by name
+    cookieStore.delete('accessToken');
+    cookieStore.delete('refreshToken');
+    cookieStore.delete('authToken'); // For backward compatibility
 
-    cookieNames.forEach(name => {
-        cookies.push(serialize(name, '', {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            path: '/',
-            maxAge: 0, // Immediately expire the cookie
-        }));
-    });
-
-    const response = NextResponse.json({ success: true, message: 'All token cookies cleared' });
-
-    // Set all cleared cookies in the response headers
-    cookies.forEach(cookie => {
-        response.headers.append('Set-Cookie', cookie);
-    });
-
-    return response;
+    return NextResponse.json({ message: 'Tokens cleared' }, { status: 200 });
 }
