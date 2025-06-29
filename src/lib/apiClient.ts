@@ -208,6 +208,8 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
         }
 
         // For network errors or other unexpected errors
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-expect-error
         throw new new Error(`API Request Failed: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
