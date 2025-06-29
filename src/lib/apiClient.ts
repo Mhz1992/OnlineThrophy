@@ -154,7 +154,7 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                 } else if (typeof errorData === 'object') {
                     // Django field errors format: {"field_name": ["error message"]}
                     const fieldErrors = Object.entries(errorData)
-                        .filter(([key, value]) => Array.isArray(value) || typeof value === 'string')
+                        .filter(([_key, value]) => Array.isArray(value) || typeof value === 'string') // Changed 'key' to '_key' here
                         .map(([key, value]) => {
                             const errorValue = Array.isArray(value) ? value.join(', ') : value;
                             return `${key}: ${errorValue}`;
@@ -207,6 +207,6 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
         }
 
         // For network errors or other unexpected errors
-        throw new Error(`API Request Failed: ${error instanceof Error ? error.message : String(error)}`);
+        throw new new Error(`API Request Failed: ${error instanceof Error ? error.message : String(error)}`);
     }
 }
