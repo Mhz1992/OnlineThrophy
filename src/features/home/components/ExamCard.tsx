@@ -21,7 +21,7 @@ export const StartExamCard: React.FC<StartExamCardProps> = ({ exam_id , isLoadin
                         <Skeleton className="w-48 h-5 "/>
                     </CardHeader>
                 </Card>
-            ) : exam_id ? (
+            ) : exam_id && exam_id !== "" ? (
                 <Card className="w-full rounded-[20px] relative overflow-hidden -top-10 bg-[#F2FAFF]">
                     <CardHeader>
                         <CardTitle className="w-full">

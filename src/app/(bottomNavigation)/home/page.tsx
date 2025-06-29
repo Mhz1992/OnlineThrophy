@@ -1,16 +1,14 @@
 'use client';
 
-import React, {useState} from 'react';
-import Link from 'next/link';
-import {Card, CardHeader, CardTitle} from '@/components/ui/card';
-import {ArrowLeftIcon, NotificationIcon} from "@/features/common/assets/svg";
+import React, {useEffect, useState} from 'react';
+import {NotificationIcon} from "@/features/common/assets/svg";
 import {NotificationDrawer} from "@/features/drawers/NotificationDrawer";
 import {Skeleton} from "@/components/skeleton";
 import {TherapySessionSection} from "@/features/home/components/TherapySessionSection";
 import {useHomeQuery} from "@/features/home/api/hooks";
 import {StartExamCard} from "@/features/home/components/ExamCard";
 
-export default function Page() {
+export default function HomePage() {
     const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
 
@@ -20,6 +18,7 @@ export default function Page() {
     const userSessions = homeData?.active_therapy_sessions;
     const examId = homeData?.exam_id;
 
+    console.log(userSessions)
     if (isError) {
         return (
             <div className="flex flex-col h-full items-center justify-center p-4 text-center">
@@ -49,7 +48,7 @@ export default function Page() {
             <div className="flex-grow flex flex-col "> {/* Removed overflow-y-auto here */}
                 {examId && <StartExamCard exam_id={examId} isLoading={isLoading}/>}
 
-                {userSessions && userSessions.length == 0 ? (
+                {userSessions && userSessions.length != 0 ? (
                         <TherapySessionSection isLoading={isLoading} therapySessions={userSessions}/>) :
                     <h3 className="text-xl font-semibold text-center m-auto items-center">
                         جلسه‌ای برای شما وجود ندارد.
