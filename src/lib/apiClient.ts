@@ -154,6 +154,7 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                 } else if (typeof errorData === 'object') {
                     // Django field errors format: {"field_name": ["error message"]}
                     const fieldErrors = Object.entries(errorData)
+                        // eslint-disable-next-line @typescript-eslint/no-unused-vars
                         .filter(([_key, value]) => Array.isArray(value) || typeof value === 'string') // Changed 'key' to '_key' here
                         .map(([key, value]) => {
                             const errorValue = Array.isArray(value) ? value.join(', ') : value;
