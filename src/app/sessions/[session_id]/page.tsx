@@ -2,11 +2,9 @@
 
 import React from 'react';
 import {useRouter} from 'next/navigation';
-import {useQuery} from '@tanstack/react-query';
 import {Button} from '@/components/button';
 import {ArrowLIcon} from "@/features/common/assets/svg";
 import {SessionContentDisplay} from '@/features/session/components/SessionContentDisplay';
-import {TrophySession} from '@/types/api'; // Removed SessionContent
 import {cn} from '@/lib/utils';
 import {SessionContentSkeleton} from '@/features/skeleton/SessionContentSkeleton';
 import {Skeleton} from "@/components/skeleton";
@@ -33,6 +31,7 @@ export default function SessionPage({params}: SessionPageProps) {
             </div>
         );
     }
+    console.log(sessionData)
 
     return (
         <div className="flex flex-col h-full">

@@ -120,7 +120,7 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
     const handleAudioTogglePlayPause = (id: string) => {
         setCurrentlyPlayingAudioId(prevId => (prevId === id ? null : id));
     };
-
+    console.log(media)
     return (
         <div className="space-y-6 py-4">
             {media.map((content) => (
@@ -143,7 +143,7 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                         </div>
                     )}
 
-                    {content.media_type === 'text' && content.value && (
+                    {content.media_type === 'textarea' && content.value && (
                         <Card className="w-full rounded-lg shadow-md" style={{backgroundColor: '#F2F2F2'}}>
                             <CardHeader>
                                 {content.title && <CardTitle className="text-right">{content.title}</CardTitle>}
@@ -152,6 +152,9 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                                 <p className="text-sm text-gray-800 text-justify">{content.value}</p>
                             </CardContent>
                         </Card>
+                    )}
+                    {content.media_type === 'textheader' && content.value && (
+                        <div> {content.value && <CardTitle className="text-right text-2xl">{content.value}</CardTitle>}</div>
                     )}
 
                     {content.media_type === 'voice' && content.value && (
