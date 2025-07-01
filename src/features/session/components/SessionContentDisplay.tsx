@@ -1,16 +1,12 @@
 'use client';
 
-import React, { useRef, useState, useEffect } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/button';
-import { PlayIcon, PauseIcon } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { SessionContent } from '@/types/api';
+import React, {useEffect, useRef, useState} from 'react';
+import {Card, CardContent, CardHeader, CardTitle} from '@/components/ui/card';
+import {Button} from '@/components/button';
+import {PauseIcon, PlayIcon} from 'lucide-react';
+import {cn} from '@/lib/utils';
 import WaveSurfer from 'wavesurfer.js';
 
-interface SessionContentDisplayProps {
-    contents: SessionContent[];
-}
 
 interface AudioPlayerProps {
     id: string;
@@ -20,7 +16,7 @@ interface AudioPlayerProps {
     onTogglePlayPause: (id: string) => void; // Callback to parent to toggle this audio's state
 }
 
-const AudioPlayer: React.FC<AudioPlayerProps> = ({ id, title, link, isPlaying, onTogglePlayPause }) => {
+const AudioPlayer: React.FC<AudioPlayerProps> = ({id, title, link, isPlaying, onTogglePlayPause}) => {
     const waveformRef = useRef<HTMLDivElement>(null);
     const wavesurfer = useRef<WaveSurfer | null>(null);
     const [isReady, setIsReady] = useState(false);
@@ -97,13 +93,13 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ id, title, link, isPlaying, o
     };
 
     return (
-        <Card className="w-full rounded-lg shadow-md" style={{ backgroundColor: '#F2F2F2' }}>
+        <Card className="w-full rounded-lg shadow-md" style={{backgroundColor: '#F2F2F2'}}>
             <CardHeader>
                 {title && <CardTitle className="text-right text-primary">{title}</CardTitle>}
             </CardHeader>
             <CardContent className="flex items-center mx-0">
                 <Button onClick={handlePlayPause} variant="outline" size="icon" isLoading={!isReady}>
-                    {isLocalPlaying ? <PauseIcon className="h-5 w-5" /> : <PlayIcon className="h-5 w-5" />}
+                    {isLocalPlaying ? <PauseIcon className="h-5 w-5"/> : <PlayIcon className="h-5 w-5"/>}
                 </Button>
                 <div ref={waveformRef} className="flex-1 mx-4 h-[60px]">
                     {!isReady && (
@@ -118,7 +114,7 @@ const AudioPlayer: React.FC<AudioPlayerProps> = ({ id, title, link, isPlaying, o
 };
 
 
-export const SessionContentDisplay: React.FC<SessionContentDisplayProps> = ({ contents }) => {
+export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({media}) => {
     const [currentlyPlayingAudioId, setCurrentlyPlayingAudioId] = useState<string | null>(null);
 
     const handleAudioTogglePlayPause = (id: string) => {
@@ -127,17 +123,17 @@ export const SessionContentDisplay: React.FC<SessionContentDisplayProps> = ({ co
 
     return (
         <div className="space-y-6 py-4">
-            {contents.map((content) => (
+            {media.map((content) => (
                 <div key={content.id}>
-                    {content.type === 'video' && content.link && (
+                    {content.media_type === 'video' && content.value && (
                         <div className="flex flex-col items-center">
                             {content.title && (
                                 <h2 className={cn("text-lg font-bold mb-4 text-right w-full text-primary")}>{content.title}</h2>
                             )}
-                            <div className="relative w-full" style={{ paddingBottom: '56.25%' }}>
+                            <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
                                 <iframe
                                     className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                    src={content.link}
+                                    src={content.value}
                                     title={content.title || "Session Video"}
                                     frameBorder="0"
                                     allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
@@ -147,22 +143,22 @@ export const SessionContentDisplay: React.FC<SessionContentDisplayProps> = ({ co
                         </div>
                     )}
 
-                    {content.type === 'text' && content.description && (
-                        <Card className="w-full rounded-lg shadow-md" style={{ backgroundColor: '#F2F2F2' }}>
+                    {content.media_type === 'text' && content.value && (
+                        <Card className="w-full rounded-lg shadow-md" style={{backgroundColor: '#F2F2F2'}}>
                             <CardHeader>
                                 {content.title && <CardTitle className="text-right">{content.title}</CardTitle>}
                             </CardHeader>
                             <CardContent className="text-right">
-                                <p className="text-sm text-gray-800 text-justify">{content.description}</p>
+                                <p className="text-sm text-gray-800 text-justify">{content.value}</p>
                             </CardContent>
                         </Card>
                     )}
 
-                    {content.type === 'voice' && content.link && (
+                    {content.media_type === 'voice' && content.value && (
                         <AudioPlayer
                             id={content.id}
                             title={content.title}
-                            link={content.link}
+                            link={content.value}
                             isPlaying={currentlyPlayingAudioId === content.id}
                             onTogglePlayPause={handleAudioTogglePlayPause}
                         />
