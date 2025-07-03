@@ -6,7 +6,7 @@ import {Button} from '@/components/button';
 import {PauseIcon, PlayIcon} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import WaveSurfer from 'wavesurfer.js';
-import ReactMarkdown from 'react-markdown'; // Added import for ReactMarkdown
+import ReactMarkdown from 'react-markdown';
 
 
 interface AudioPlayerProps {
@@ -149,10 +149,19 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                                 {content.title && <CardTitle className="text-right">{content.title}</CardTitle>}
                             </CardHeader>
                             <CardContent className="text-right">
-                                {/* Render markdown content */}
-                                <ReactMarkdown className="text-sm text-gray-800 text-justify prose prose-sm max-w-none">
-                                    {content.value}
-                                </ReactMarkdown>
+                                {/* Apply prose classes to a wrapper div */}
+                                <div className="prose prose-sm max-w-none">
+                                    <ReactMarkdown
+                                        components={{
+                                            // Apply text styling classes to paragraph elements
+                                            p: ({ node, ...props }) => (
+                                                <p className="text-sm text-gray-800 text-justify" {...props} />
+                                            ),
+                                        }}
+                                    >
+                                        {content.value}
+                                    </ReactMarkdown>
+                                </div>
                             </CardContent>
                         </Card>
                     )}
