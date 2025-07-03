@@ -120,7 +120,6 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
     const handleAudioTogglePlayPause = (id: string) => {
         setCurrentlyPlayingAudioId(prevId => (prevId === id ? null : id));
     };
-    console.log(media)
     return (
         <div className="space-y-6 py-4">
             {media.map((content) => (

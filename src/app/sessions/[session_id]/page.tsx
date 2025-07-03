@@ -31,8 +31,6 @@ export default function SessionPage({params}: SessionPageProps) {
             </div>
         );
     }
-    console.log(sessionData)
-
     return (
         <div className="flex flex-col h-full">
             <header className="flex items-center justify-between py-4 border-b border-gray-200 dark:border-gray-700">

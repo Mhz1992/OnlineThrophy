@@ -3,6 +3,7 @@
 // Custom error class for authentication failures
 export class AuthError extends Error {
     statusCode: number;
+
     constructor(message: string, statusCode: number) {
         super(message);
         this.name = 'AuthError';
@@ -35,13 +36,13 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
     }
 
     try {
-        const baseUrl = process.env.BACKEND_CORE_URL || '/api/backend';
+        const baseUrl = process.env.NEXT_PUBLIC_URL;
         const response = await fetch(`${baseUrl}/api/auth/token/refresh/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ refresh: refreshToken }),
+            body: JSON.stringify({refresh: refreshToken}),
         });
 
         if (!response.ok) {
@@ -65,9 +66,9 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                body: JSON.stringify({ 
-                    access: data.access, 
-                    refresh: data.refresh || refreshToken 
+                body: JSON.stringify({
+                    access: data.access,
+                    refresh: data.refresh || refreshToken
                 }),
             });
         } catch (cookieError) {
@@ -107,7 +108,7 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
  * @throws An AuthError if the API returns a 401 or 403 status and token refresh fails.
  */
 export async function apiClient<T>(url: string, options: ApiClientOptions = {}): Promise<T> {
-    const { method = 'GET', body, headers, isAuthRequest = false, skipRefreshToken = false } = options;
+    const {method = 'GET', body, headers, isAuthRequest = false, skipRefreshToken = false} = options;
 
     const defaultHeaders: HeadersInit = {
         'Content-Type': 'application/json',
@@ -133,14 +134,14 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
     }
 
     // Use the baseURL from environment variables if available, otherwise use the proxied path
-    const baseUrl = process.env.NEXT_PUBLIC_URL ;
+    const baseUrl = process.env.NEXT_PUBLIC_URL;
     const fullUrl = `${baseUrl}${url}`;
 
     try {
         const response = await fetch(fullUrl, config);
 
         if (!response.ok) {
-            const errorData = await response.json().catch(() => ({ message: 'An unknown error occurred' }));
+            const errorData = await response.json().catch(() => ({message: 'An unknown error occurred'}));
 
             // Extract error message from Django response format
             let errorMessage = 'An unknown error occurred';
@@ -167,10 +168,10 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                 }
             }
 
-            // If we get a 403 and we're not already trying to refresh the token, attempt to refresh
-            if (response.status === 403 && !skipRefreshToken && !isAuthRequest) {
+            // If we get a 401 and we're not already trying to refresh the token, attempt to refresh
+            if (response.status === 401 && !skipRefreshToken && !isAuthRequest) {
                 try {
-                    // Refresh the token
+                    console.log("refreshing token")
                     await refreshAccessToken();
 
                     // Retry the original request with the new token

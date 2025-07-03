@@ -18,7 +18,6 @@ export default function HomePage() {
     const userSessions = homeData?.active_therapy_sessions;
     const examId = homeData?.exam_id;
 
-    console.log(userSessions)
     if (isError) {
         return (
             <div className="flex flex-col h-full items-center justify-center p-4 text-center">
