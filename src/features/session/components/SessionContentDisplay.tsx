@@ -7,7 +7,7 @@ import {PauseIcon, PlayIcon} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import WaveSurfer from 'wavesurfer.js';
 import ReactMarkdown from 'react-markdown';
-
+import rehypeRaw from 'rehype-raw';
 
 interface AudioPlayerProps {
     id: string;
@@ -152,6 +152,7 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                                 {/* Apply prose classes to a wrapper div */}
                                 <div className="prose prose-sm max-w-none">
                                     <ReactMarkdown
+                                        rehypePlugins={[rehypeRaw]}
                                         components={{
                                             // Apply text styling classes to paragraph elements
                                             // eslint-disable-next-line @typescript-eslint/no-unused-vars
