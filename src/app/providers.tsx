@@ -6,8 +6,8 @@ import {ThemeProvider} from 'next-themes';
 import {ReactQueryDevtools} from '@tanstack/react-query-devtools';
 import ThemeDataProvider from "@/components/ui/theme-toggle/theme-data-provider";
 import Toaster from "@/components/compunds/toaster";
-import { useRouter } from 'next/navigation'; // Import useRouter
-import { AuthError } from '@/src/lib/apiClient'; // Import AuthError
+import {useRouter} from 'next/navigation'; // Import useRouter
+import {AuthError} from '@/src/lib/apiClient'; // Import AuthError
 
 export function Providers({children}: { children: React.ReactNode }): JSX.Element {
     const router = useRouter(); // Get router instance
