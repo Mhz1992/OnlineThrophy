@@ -18,7 +18,7 @@ const nextConfig = {
         remotePatterns: [
             {
                 protocol: 'https',
-                hostname: 'via.placeholder.com',
+                hostname: 'nilva-storage.darkube.app',
                 port: '',
                 pathname: '/**',
             },
