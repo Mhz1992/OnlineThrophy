@@ -7,12 +7,8 @@ const publicPaths = [
     '/login',
     '/register',
     '/forgot-password',
-    '/api/auth/forgot-password',
-    '/api/backend/auth/signup',
-    '/api/backend/auth/login',
     '/api/auth/set-token-cookie',
     '/api/auth/clear-token-cookie',
-    '/api/auth/token/refresh'
 ];
 
 export async function middleware(request: NextRequest) {
@@ -34,10 +30,8 @@ export async function middleware(request: NextRequest) {
 
         if (expired && refreshTokenCookie) {
             console.log('Token is expired, attempting to refresh');
-
             // Try to refresh the token
             const newTokens = await refreshToken(refreshTokenCookie);
-
             if (newTokens && newTokens.access) {
                 // Update the token for this request
                 token = newTokens.access;
@@ -73,6 +67,7 @@ export async function middleware(request: NextRequest) {
                         path: '/',
                         maxAge: 60 * 60 * 24 * 7, // 1 week
                     });
+                    console.log("refreshToken cookie set with value: " + newTokens.refresh )
                 }
 
                 // Continue with the request

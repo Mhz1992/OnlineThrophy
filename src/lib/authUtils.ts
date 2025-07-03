@@ -24,7 +24,7 @@ export function isTokenExpired(token: string): boolean {
 // Function to refresh the access token using the refresh token
 export async function refreshToken(refreshToken: string): Promise<{ access: string, refresh?: string } | null> {
     try {
-        const baseUrl = process.env.BACKEND_CORE_URL || '/api/backend';
+        const baseUrl = process.env.NEXT_PUBLIC_URL ;
         const response = await fetch(`${baseUrl}/api/auth/token/refresh/`, {
             method: 'POST',
             headers: {
@@ -37,6 +37,7 @@ export async function refreshToken(refreshToken: string): Promise<{ access: stri
             console.error('Failed to refresh token:', response.status);
             return null;
         }
+        console.log("refreshing token successfully")
 
         return await response.json();
     } catch (error) {

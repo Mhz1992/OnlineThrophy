@@ -50,6 +50,7 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
         }
 
         const data = await response.json();
+        console.log(data)
 
         // Update tokens in localStorage
         if (data.access) {
@@ -77,6 +78,7 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
 
         return data;
     } catch (error) {
+        console.log(error)
         // If refresh token is invalid, clear all tokens
         localStorage.removeItem('accessToken');
         localStorage.removeItem('refreshToken');
@@ -109,7 +111,7 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
  */
 export async function apiClient<T>(url: string, options: ApiClientOptions = {}): Promise<T> {
     const {method = 'GET', body, headers, isAuthRequest = false, skipRefreshToken = false} = options;
-
+    console.log("start call api")
     const defaultHeaders: HeadersInit = {
         'Content-Type': 'application/json',
         ...headers,

@@ -13,46 +13,46 @@ export function Providers({children}: { children: React.ReactNode }): JSX.Elemen
     const router = useRouter(); // Get router instance
 
     const [queryClient] = useState(() => new QueryClient({
-        queryCache: new QueryCache({
-            onError: async (error) => { // Made async to await cookie clearing
-                if (error instanceof AuthError && (error.statusCode === 401 || error.statusCode === 403)) {
-                    localStorage.removeItem('authToken'); // Clear token from localStorage
-
-                    // Call the new API route to clear the HTTP-only cookie
-                    try {
-                        await fetch('/api/auth/clear-token-cookie', {
-                            method: 'POST',
-                        });
-                    } catch (cookieError) {
-                        console.error('Failed to clear token cookie:', cookieError);
-                    }
-
-                    router.push('/login'); // Redirect to login page
-                    // Optionally, show a toast message
-                    // toast.error(error.message || 'Your session has expired. Please log in again.');
-                }
-            },
-        }),
-        mutationCache: new MutationCache({
-            onError: async (error) => { // Made async to await cookie clearing
-                if (error instanceof AuthError && (error.statusCode === 401 || error.statusCode === 403)) {
-                    localStorage.removeItem('authToken'); // Clear token from localStorage
-
-                    // Call the new API route to clear the HTTP-only cookie
-                    try {
-                        await fetch('/api/auth/clear-token-cookie', {
-                            method: 'POST',
-                        });
-                    } catch (cookieError) {
-                        console.error('Failed to clear token cookie:', cookieError);
-                    }
-
-                    router.push('/login'); // Redirect to login page
-                    // Optionally, show a toast message
-                    // toast.error(error.message || 'Your session has expired. Please log in again.');
-                }
-            },
-        }),
+        // queryCache: new QueryCache({
+        //     onError: async (error) => { // Made async to await cookie clearing
+        //         if (error instanceof AuthError && ( error.statusCode === 403)) {
+        //             localStorage.removeItem('authToken'); // Clear token from localStorage
+        //
+        //             // Call the new API route to clear the HTTP-only cookie
+        //             try {
+        //                 await fetch('/api/auth/clear-token-cookie', {
+        //                     method: 'POST',
+        //                 });
+        //             } catch (cookieError) {
+        //                 console.error('Failed to clear token cookie:', cookieError);
+        //             }
+        //
+        //             router.push('/login'); // Redirect to login page
+        //             // Optionally, show a toast message
+        //             // toast.error(error.message || 'Your session has expired. Please log in again.');
+        //         }
+        //     },
+        // }),
+        // mutationCache: new MutationCache({
+        //     onError: async (error) => { // Made async to await cookie clearing
+        //         if (error instanceof AuthError && (error.statusCode === 401 || error.statusCode === 403)) {
+        //             localStorage.removeItem('authToken'); // Clear token from localStorage
+        //
+        //             // Call the new API route to clear the HTTP-only cookie
+        //             try {
+        //                 await fetch('/api/auth/clear-token-cookie', {
+        //                     method: 'POST',
+        //                 });
+        //             } catch (cookieError) {
+        //                 console.error('Failed to clear token cookie:', cookieError);
+        //             }
+        //
+        //             router.push('/login'); // Redirect to login page
+        //             // Optionally, show a toast message
+        //             // toast.error(error.message || 'Your session has expired. Please log in again.');
+        //         }
+        //     },
+        // }),
     }));
 
     return (
