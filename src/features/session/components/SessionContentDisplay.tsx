@@ -133,10 +133,10 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                             <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
                                 <iframe
                                     className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                    src={content.value}
+                                    src={content.value + (content.value.includes('?') ? '&' : '?') + 'autoplay=0'} // Disable autoplay
                                     title={content.title || "Session Video"}
                                     frameBorder="0"
-                                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // Removed autoplay from allow
                                     allowFullScreen
                                 ></iframe>
                             </div>

@@ -16,26 +16,26 @@ export const useSignupMutation = (options?: UseSignupMutationOptions) => {
         mutationFn: signupUserApi,
         onSuccess: async (response: SignupResponse) => {
             if (response && response.access) {
-                localStorage.setItem('accessToken', response.access);
-                if (response.refresh) {
-                    localStorage.setItem('refreshToken', response.refresh);
-                }
-                try {
-                    await fetch('/api/auth/set-token-cookie', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                        body: JSON.stringify({ access: response.access, refresh: response.refresh }),
-                    });
-                } catch (cookieError) {
-                    console.error('Failed to set token cookie:', cookieError);
-                }
+                // No longer store tokens in localStorage; they will be in HTTP-only cookies.
+                // localStorage.setItem('accessToken', response.access);
+                // if (response.refresh) {
+                //     localStorage.setItem('refreshToken', response.refresh);
+                // }
+                // try {
+                //     await fetch('/api/auth/set-token-cookie', {
+                //         method: 'POST',
+                //         headers: {
+                //             'Content-Type': 'application/json',
+                //         },
+                //         body: JSON.stringify({ access: response.access, refresh: response.refresh }),
+                //     });
+                // } catch (cookieError) {
+                //     console.error('Failed to set token cookie:', cookieError);
+                // }
 
                 toast.success('ثبت نام موفقیت‌آمیز بود!');
                 router.push('/home'); // Redirect to home page
             } else {
-                // This branch handles cases where the API might return a 200 OK but with a logical error message
                 const errorMessage = 'ثبت نام ناموفق بود';
                 toast.error(errorMessage);
                 options?.onError?.(new Error(errorMessage));
@@ -43,11 +43,9 @@ export const useSignupMutation = (options?: UseSignupMutationOptions) => {
             options?.onSuccess?.(response);
         },
         onError: (err: Error) => {
-            // Display the error message from Django in a toast notification
-            // The message has already been extracted and formatted by the apiClient
             const errorMessage = err.message || 'ثبت نام ناموفق بود';
             toast.error(errorMessage, {
-                duration: 5000, // Show for 5 seconds to give users time to read longer error messages
+                duration: 5000,
                 position: 'top-center',
             });
             options?.onError?.(err);

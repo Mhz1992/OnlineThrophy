@@ -10,8 +10,8 @@ export const TherapySessionSection = ({therapySessions, isLoading}: {
 }) => {
     return (
         <div className="w-full mt-6 relative">
-            <h3 className="text-xl font-semibold text-right mb-4 flex items-center">
-                <BookOpenIcon height={24} width={24} className={cn("mx-3")}/>
+            <h3 className="text-xl font-semibold text-right mb-4 flex items-center text-foreground">
+                <BookOpenIcon className="w-5 h-5 mx-3"/>
                 جلسات آموزشی
             </h3>
             {isLoading ? (

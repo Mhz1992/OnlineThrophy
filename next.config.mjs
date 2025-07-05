@@ -44,19 +44,9 @@ const nextConfig = {
     },
     env: {
         REACT_QUERY_DEV_TOOLS: process.env.REACT_QUERY_DEV_TOOLS,
-        BACKEND_CORE_URL: process.env.BACKEND_CORE_URL,
         DEBUG: process.env.DEBUG,
         GIT_TAG: process.env.GIT_TAG,
         NEXT_PUBLIC_URL: process.env.NEXT_PUBLIC_URL,
-    },
-    async rewrites() {
-        return [
-            {
-                source: '/audio-proxy/:path*',
-                destination: 'http://farsi.voiceoversamples.com/:path*',
-            },
-            // NEW: Proxy backend API calls to bypass CORS
-        ];
     },
 };
 

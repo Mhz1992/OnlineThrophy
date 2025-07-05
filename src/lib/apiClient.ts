@@ -13,93 +13,18 @@ export class AuthError extends Error {
 
 interface ApiClientOptions {
     method?: string;
-    body?: Record<string, unknown>; // Changed 'any' to 'unknown'
+    body?: Record<string, unknown>;
     headers?: Record<string, string>;
     isAuthRequest?: boolean; // Flag to indicate if it's an authentication request (e.g., login/register)
     skipRefreshToken?: boolean; // Flag to skip token refresh attempt (to prevent infinite loops)
 }
 
-interface TokenResponse {
-    access: string;
-    refresh?: string;
-}
-
-/**
- * Refreshes the access token using the refresh token
- * @returns A Promise that resolves with the new access token
- */
-export async function refreshAccessToken(): Promise<TokenResponse> {
-    const refreshToken = localStorage.getItem('refreshToken');
-
-    if (!refreshToken) {
-        throw new AuthError('No refresh token available', 401);
-    }
-
-    try {
-        const baseUrl = process.env.NEXT_PUBLIC_URL;
-        const response = await fetch(`${baseUrl}/api/auth/token/refresh/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({refresh: refreshToken}),
-        });
-
-        if (!response.ok) {
-            throw new AuthError('Failed to refresh token', response.status);
-        }
-
-        const data = await response.json();
-
-        // Update tokens in localStorage
-        if (data.access) {
-            localStorage.setItem('accessToken', data.access);
-        }
-        if (data.refresh) {
-            localStorage.setItem('refreshToken', data.refresh);
-        }
-
-        // Update tokens in cookies
-        try {
-            await fetch('/api/auth/set-token-cookie', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    access: data.access,
-                    refresh: data.refresh || refreshToken
-                }),
-            });
-        } catch (cookieError) {
-            console.error('Failed to update token cookie:', cookieError);
-        }
-
-        return data;
-    } catch (error) {
-        // If refresh token is invalid, clear all tokens
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('authToken'); // For backward compatibility
-
-        // Clear cookies
-        try {
-            await fetch('/api/auth/clear-token-cookie', {
-                method: 'POST',
-            });
-        } catch (cookieError) {
-            console.error('Failed to clear token cookie:', cookieError);
-        }
-
-        throw error;
-    }
-}
 
 /**
  * A centralized API client for making requests.
- * Automatically adds Authorization header with token from localStorage for non-auth requests.
+ * Assumes authentication tokens are handled by HTTP-only cookies and Next.js middleware.
  * Handles JSON parsing and error throwing.
- * Automatically refreshes the access token if a 403 error occurs.
+ * Automatically attempts to refresh the access token via a server-side endpoint if a 401 error occurs.
  *
  * @param url The API endpoint path (e.g., '/auth/login', '/home'). It will be prefixed with '/api/backend'.
  * @param options Request options including method, body, headers, and an optional isAuthRequest flag.
@@ -108,25 +33,22 @@ export async function refreshAccessToken(): Promise<TokenResponse> {
  * @throws An AuthError if the API returns a 401 or 403 status and token refresh fails.
  */
 export async function apiClient<T>(url: string, options: ApiClientOptions = {}): Promise<T> {
-    const {method = 'GET', body, headers, isAuthRequest = false, skipRefreshToken = false} = options;
+    const {method = 'GET', body, headers} = options;
 
     const defaultHeaders: HeadersInit = {
         'Content-Type': 'application/json',
         ...headers,
     };
 
-    // Add Authorization header if a token exists and it's not an authentication request
-    if (!isAuthRequest) {
-        // Try to get the access token first, fall back to authToken for backward compatibility
-        const token = localStorage.getItem('accessToken')
-        if (token) {
-            defaultHeaders['Authorization'] = `Bearer ${token}`;
-        }
-    }
+    // IMPORTANT: The Authorization header is NOT set here from client-side localStorage.
+    // It is assumed that Next.js middleware or the backend will read the HTTP-only
+    // 'accessToken' cookie and attach the Authorization header before the request
+    // reaches your Django backend.
 
     const config: RequestInit = {
         method,
         headers: defaultHeaders,
+        credentials: 'include', // Ensure cookies are sent with the request
     };
 
     if (body && method !== 'GET' && method !== 'HEAD') {
@@ -156,7 +78,7 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                     // Django field errors format: {"field_name": ["error message"]}
                     const fieldErrors = Object.entries(errorData)
                         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-                        .filter(([_key, value]) => Array.isArray(value) || typeof value === 'string') // Changed 'key' to '_key' here
+                        .filter(([_key, value]) => Array.isArray(value) || typeof value === 'string')
                         .map(([key, value]) => {
                             const errorValue = Array.isArray(value) ? value.join(', ') : value;
                             return `${key}: ${errorValue}`;
@@ -169,18 +91,32 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
             }
 
             // If we get a 401 and we're not already trying to refresh the token, attempt to refresh
-            if (response.status === 401 && !skipRefreshToken && !isAuthRequest) {
+            if (response.status === 401) {
                 try {
-                    console.log("refreshing token")
-                    await refreshAccessToken();
+                    console.log("Attempting to refresh token via server-side endpoint...");
+                    // Call the new server-side refresh endpoint
+                    const refreshResponse = await fetch(`${origin}/api/auth/refresh-token`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        credentials: 'include', // Ensure cookies are sent for refresh request
+                    });
+                    if (!refreshResponse.ok) {
+                        // If server-side refresh fails, it means the refresh token is invalid or expired
+                        // The server-side endpoint should have already cleared cookies.
+                        console.error('Server-side token refresh failed:', refreshResponse.status);
+                        throw new AuthError(errorMessage || 'Authentication failed or forbidden', response.status);
+                    }
 
-                    // Retry the original request with the new token
+                    console.log("Token refreshed successfully. Retrying original request.");
+                    // Retry the original request with the new token (cookies will be sent automatically)
                     return apiClient<T>(url, {
                         ...options,
                         skipRefreshToken: true, // Prevent infinite refresh loops
                     });
                 } catch (refreshError) {
-                    console.log(refreshError)
+                    console.error('Error during client-side refresh attempt:', refreshError);
                     // If refresh fails, throw the original error
                     throw new AuthError(errorMessage || 'Authentication failed or forbidden', response.status);
                 }
@@ -208,9 +144,6 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
             throw error;
         }
 
-        // For network errors or other unexpected errors
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-expect-error
-        throw new new Error(`API Request Failed: ${error instanceof Error ? error.message : String(error)}`);
+        throw new Error(`API Request Failed: ${error instanceof Error ? error.message : String(error)}`);
     }
 }

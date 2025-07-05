@@ -16,22 +16,6 @@ export const useLogoutMutation = (options?: UseLogoutMutationOptions) => {
     return useMutation<void, Error, LogoutRequest>({
         mutationFn: logoutUserApi,
         onSuccess: async () => {
-                // Clear tokens from localStorage
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('authToken');
-                localStorage.removeItem('refreshToken');
-
-                // Call the API route to clear the HTTP-only cookies
-                try {
-                    await fetch('/api/auth/clear-token-cookie', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json',
-                        },
-                    });
-                } catch (cookieError) {
-                    console.error('Failed to clear token cookie:', cookieError);
-                }
 
                 toast.success('خروج موفقیت‌آمیز بود!');
                 router.push('/login');

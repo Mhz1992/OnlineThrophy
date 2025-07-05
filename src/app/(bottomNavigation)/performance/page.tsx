@@ -1,9 +1,9 @@
 'use client';
 
-import React from 'react';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
-import { Skeleton } from '@/components/skeleton';
-import { PerformanceCard } from '@/features/performance/components/PerformanceCard';
+import React, {useEffect, useState} from 'react';
+import {Card, CardContent, CardHeader} from '@/components/ui/card';
+import {Skeleton} from '@/components/skeleton';
+import {PerformanceCard} from '@/features/performance/components/PerformanceCard';
 import {
     Chart as ChartJS,
     CategoryScale,
@@ -18,10 +18,11 @@ import {
     Scale,
     CoreScaleOptions,
 } from 'chart.js';
-import { Line } from 'react-chartjs-2';
+import {Line} from 'react-chartjs-2';
 import {danaFont} from "@/lib/utils";
 import {usePerformanceQuery} from "@/features/performance/api/hooks";
 import {getPersianDate} from "@/core/utils/getPersianDate";
+import {useTheme} from 'next-themes'; // Import useTheme
 
 // Register Chart.js components
 ChartJS.register(
@@ -34,21 +35,31 @@ ChartJS.register(
     Legend
 );
 
-// Hardcoded color values based on common theme defaults
-const PRIMARY_COLOR = '#1F95EB';
-const FOREGROUND_COLOR = '#020817';
-const BACKGROUND_COLOR = '#FFFFFF';
-const BORDER_COLOR = '#E2E8F0';
-
-// Set global font and color for Chart.js
-if (ChartJS.defaults.font.family !== danaFont.style.fontFamily) {
-    ChartJS.defaults.font.family = danaFont.style.fontFamily;
-}
-ChartJS.defaults.color = FOREGROUND_COLOR; // Default text color for chart elements
+// Helper function to get CSS variable values
+const getCssVariable = (variableName: string, fallback: string) => {
+    if (typeof window !== 'undefined') {
+        const value = getComputedStyle(document.documentElement).getPropertyValue(variableName).trim();
+        return value || fallback;
+    }
+    return fallback; // Fallback for SSR or if variable not found
+};
 
 export default function PerformancePage() {
-    // Use the new usePerformanceData hook
-    const { data, isLoading, isError } = usePerformanceQuery();
+
+    // State to store dynamic colors, initialized with sensible defaults
+    const colors = {
+        primary: getCssVariable('--primary', '#1F95EB'),
+        foreground: getCssVariable('--foreground', '#020817'),
+        background: getCssVariable('--background', '#FFFFFF'),
+        border: getCssVariable('--border', '#E2E8F0'),
+    };
+
+    if (ChartJS.defaults.font.family !== danaFont.style.fontFamily) {
+        ChartJS.defaults.font.family = danaFont.style.fontFamily;
+    }
+    ChartJS.defaults.color = colors.foreground; // Update default text color for chart elements
+
+    const {data, isLoading, isError} = usePerformanceQuery();
 
     if (isError) {
         return (
@@ -73,10 +84,10 @@ export default function PerformancePage() {
             {
                 label: 'امتیاز',
                 data: chartScores,
-                borderColor: PRIMARY_COLOR, // Hardcoded primary color
+                borderColor: colors.primary, // Use dynamic primary color
                 backgroundColor: (context: ScriptableContext<'line'>) => {
                     const chart = context.chart;
-                    const { ctx, chartArea } = chart;
+                    const {ctx, chartArea} = chart;
 
                     if (!chartArea) {
                         return;
@@ -84,15 +95,16 @@ export default function PerformancePage() {
 
                     const gradient = ctx.createLinearGradient(0, chartArea.bottom, 0, chartArea.top);
                     gradient.addColorStop(0, 'transparent'); // Start transparent at the bottom
-                    gradient.addColorStop(1, 'rgba(31, 149, 235, 0.2)'); // Hardcoded primary color with 20% opacity
+                    // Use dynamic primary color with 20% opacity (hex alpha '33')
+                    gradient.addColorStop(1, `${colors.primary}33`);
 
                     return gradient;
                 },
                 fill: true, // Enable fill for the area under the line
                 tension: 0.4, // Smooth curve
                 pointRadius: 5,
-                pointBackgroundColor: PRIMARY_COLOR, // Hardcoded primary color
-                pointBorderColor: BACKGROUND_COLOR, // Hardcoded background color
+                pointBackgroundColor: colors.primary, // Use dynamic primary color
+                pointBorderColor: colors.background, // Use dynamic background color
                 pointBorderWidth: 2,
                 pointHoverRadius: 7,
             },
@@ -108,23 +120,27 @@ export default function PerformancePage() {
             },
             tooltip: {
                 callbacks: {
-                    title: function(context: TooltipItem<'line'>[]) {
+                    title: function (context: TooltipItem<'line'>[]) {
                         return context[0].label; // Month name
                     },
-                    label: function(context: TooltipItem<'line'>) {
+                    label: function (context: TooltipItem<'line'>) {
                         const entryIndex = context.dataIndex;
                         const originalEntry = sortedEntries[entryIndex];
-                        const formattedDate = new Intl.DateTimeFormat('fa-IR', { year: 'numeric', month: 'long', day: 'numeric' }).format(new Date(originalEntry.inserted_dt));
+                        const formattedDate = new Intl.DateTimeFormat('fa-IR', {
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric'
+                        }).format(new Date(originalEntry.inserted_dt));
                         // Format score to Persian number
                         const persianScore = new Intl.NumberFormat('fa-IR').format(originalEntry.score);
                         return `${originalEntry.exam_type_title} - امتیاز: ${persianScore} (${formattedDate})`;
                     }
                 },
-                backgroundColor: BACKGROUND_COLOR, // Hardcoded background color
-                borderColor: BORDER_COLOR, // Hardcoded border color
+                backgroundColor: colors.background, // Use dynamic background color
+                borderColor: colors.border, // Use dynamic border color
                 borderWidth: 1,
-                titleColor: FOREGROUND_COLOR, // Hardcoded foreground color
-                bodyColor: FOREGROUND_COLOR, // Hardcoded foreground color
+                titleColor: colors.foreground, // Use dynamic foreground color
+                bodyColor: colors.foreground, // Use dynamic foreground color
                 padding: 10,
                 cornerRadius: 8,
             },
@@ -133,21 +149,21 @@ export default function PerformancePage() {
             x: {
                 grid: {
                     display: false,
-                    borderColor: BORDER_COLOR, // Hardcoded border color
+                    borderColor: colors.border, // Use dynamic border color
                 },
                 ticks: {
-                    color: FOREGROUND_COLOR, // Hardcoded foreground color
+                    color: colors.foreground, // Use dynamic foreground color
                 },
             },
             y: {
                 grid: {
-                    borderColor: BORDER_COLOR, // Hardcoded border color
-                    color: BORDER_COLOR, // Hardcoded border color
+                    borderColor: colors.border, // Use dynamic border color
+                    color: colors.border, // Use dynamic border color
                 },
                 ticks: {
-                    color: FOREGROUND_COLOR, // Hardcoded foreground color
+                    color: colors.foreground, // Use dynamic foreground color
                     // Format Y-axis numbers to Persian
-                    callback: function(this: Scale<CoreScaleOptions>, value: string | number) {
+                    callback: function (this: Scale<CoreScaleOptions>, value: string | number) {
                         const numericValue = typeof value === 'string' ? parseFloat(value) : value;
                         return new Intl.NumberFormat('fa-IR').format(numericValue);
                     }
@@ -164,11 +180,12 @@ export default function PerformancePage() {
 
             <div className="flex-grow overflow-y-auto">
                 <h2 className="text-xl font-semibold text-right py-4">نمودار عملکرد</h2>
-                <div className="w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 mb-8">
+                <div
+                    className="w-full h-64 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center text-gray-500 dark:text-gray-400 mb-8">
                     {isLoading ? (
-                        <Skeleton className="w-full h-full rounded-lg" />
+                        <Skeleton className="w-full h-full rounded-lg"/>
                     ) : performanceEntries.length > 0 ? (
-                        <Line data={chartJsData} options={chartOptions} />
+                        <Line data={chartJsData} options={chartOptions}/>
                     ) : (
                         <p className="text-center text-gray-600 dark:text-gray-400">
                             هیچ داده عملکردی برای نمایش نمودار وجود ندارد.
@@ -182,11 +199,11 @@ export default function PerformancePage() {
                         {[...Array(3)].map((_, index) => (
                             <Card key={index} className="my-2">
                                 <CardHeader>
-                                    <Skeleton className="h-6 w-3/4 mb-2" />
-                                    <Skeleton className="h-4 w-1/2" />
+                                    <Skeleton className="h-6 w-3/4 mb-2"/>
+                                    <Skeleton className="h-4 w-1/2"/>
                                 </CardHeader>
                                 <CardContent>
-                                    <Skeleton className="h-4 w-1/4" />
+                                    <Skeleton className="h-4 w-1/4"/>
                                 </CardContent>
                             </Card>
                         ))}

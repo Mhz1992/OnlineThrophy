@@ -61,7 +61,7 @@ export const TherapySessionCard: React.FC<SessionCardProps> = ({ title, descript
                         </div>
                     </CardTitle>
 
-                    <CardDescription className="text-gray-400 dark:text-gray-200">
+                    <CardDescription >
                         {description}
                     </CardDescription>
                 </CardHeader>

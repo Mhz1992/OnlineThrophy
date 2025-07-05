@@ -1,6 +1,6 @@
-import {NextResponse} from 'next/server';
 import type {NextRequest} from 'next/server';
-import { isTokenExpired, refreshToken } from '@/lib/authUtils';
+import {NextResponse} from 'next/server';
+import {cookies} from "next/headers";
 
 // Define public paths that do not require authentication
 const publicPaths = [
@@ -10,93 +10,19 @@ const publicPaths = [
     '/api/auth/forgot-password',
     '/api/backend/auth/signup',
     '/api/backend/auth/login',
-    '/api/auth/set-token-cookie',
-    '/api/auth/clear-token-cookie',
-    '/api/auth/token/refresh'
+    '/api/auth/token/refresh', // Backend refresh endpoint
+    '/api/auth/refresh-token' // New Next.js API route for refreshing cookies
 ];
 
 export async function middleware(request: NextRequest) {
     const path = request.nextUrl.pathname;
     const isPublicPath = publicPaths.some(publicPath => path.startsWith(publicPath));
+    const cookieStore = await cookies()
 
-    // Check for access token in cookies (primary) or token (for backward compatibility)
-    const accessToken = request.cookies.get('accessToken')?.value;
-    const legacyToken = request.cookies.get('token')?.value;
-    const refreshTokenCookie = request.cookies.get('refreshToken')?.value;
+    const accessToken = cookieStore.get('access_token')?.value
+    const isAuthenticated = !!accessToken;
 
-    let isAuthenticated = false;
-    let token = accessToken || legacyToken;
-
-    // If we have a token, check if it's valid
-    if (token) {
-        // Check if the token is expired
-        const expired = isTokenExpired(token);
-
-        if (expired && refreshTokenCookie) {
-            console.log('Token is expired, attempting to refresh');
-
-            // Try to refresh the token
-            const newTokens = await refreshToken(refreshTokenCookie);
-
-            if (newTokens && newTokens.access) {
-                // Update the token for this request
-                token = newTokens.access;
-                isAuthenticated = true;
-
-                // Create a new response to add the updated cookies
-                const response = NextResponse.next();
-
-                // Set the new access token cookie
-                response.cookies.set('accessToken', newTokens.access, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    path: '/',
-                    maxAge: 60 * 60 * 24, // 1 day
-                });
-
-                // Set the legacy token cookie for backward compatibility
-                response.cookies.set('token', newTokens.access, {
-                    httpOnly: true,
-                    secure: process.env.NODE_ENV === 'production',
-                    sameSite: 'lax',
-                    path: '/',
-                    maxAge: 60 * 60 * 24, // 1 day
-                });
-
-                // If we got a new refresh token, update that cookie too
-                if (newTokens.refresh) {
-                    response.cookies.set('refreshToken', newTokens.refresh, {
-                        httpOnly: true,
-                        secure: process.env.NODE_ENV === 'production',
-                        sameSite: 'lax',
-                        path: '/',
-                        maxAge: 60 * 60 * 24 * 7, // 1 week
-                    });
-                }
-
-                // Continue with the request
-                console.log('Token refreshed successfully');
-
-                // If it's a public path and we're authenticated, redirect to home
-                if (isPublicPath) {
-                    console.log(`Redirecting authenticated user from public path ${path} to /`);
-                    return NextResponse.redirect(new URL('/', request.url));
-                }
-
-                return response;
-            } else {
-                console.log('Failed to refresh token');
-                // If refresh failed, consider the user not authenticated
-                isAuthenticated = false;
-            }
-        } else if (!expired) {
-            // Token is valid
-            isAuthenticated = true;
-        }
-    }
-
-    console.log(`Path: ${path}, Token present: ${!!token}, Is authenticated (middleware): ${isAuthenticated}, Token expired: ${token ? isTokenExpired(token) : 'N/A'}`);
+    console.log(`Path: ${path}, AccessToken present: ${!!accessToken}, Is authenticated (middleware): ${isAuthenticated}`);
 
     // Handle public paths
     if (isPublicPath) {
@@ -104,24 +30,34 @@ export async function middleware(request: NextRequest) {
             console.log(`Redirecting authenticated user from public path ${path} to /`);
             return NextResponse.redirect(new URL('/', request.url));
         }
+        // If it's a public path and the user is not authenticated, allow access.
         return NextResponse.next();
-    } 
+    }
     // Handle protected paths
     else {
         if (!isAuthenticated) {
-            // If not authenticated, redirect to login
-            console.log(`Redirecting unauthenticated user from protected path ${path} to /login`);
+            const refreshToken = cookieStore.get("refresh_token")
+            if (refreshToken) {
+                return NextResponse.next();
+            }
+            // console.log(`Redirecting unauthenticated user from protected path ${path} to /login`);
             return NextResponse.redirect(new URL('/login', request.url));
         }
 
-        // Allow access if authenticated
-        console.log(`Allowing access to protected path ${path} for authenticated user`);
+        // Allow access if authenticated.
+        // console.log(`Allowing access to protected path ${path} for authenticated user`);
         return NextResponse.next();
     }
 }
 
 export const config = {
     matcher: [
-        '/((?!_next/static|_next/image|favicon.ico|api/auth|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)',
+        // Match all paths except:
+        // - Next.js static files and images
+        // - favicon.ico
+        // - Specific /api/auth/* routes that manage cookies or are backend refresh endpoints
+        //   (these are handled by the API routes themselves, not the middleware's auth logic)
+        // - Other static assets (svg, png, etc.)
+        '/((?!_next/static|_next/image|/icons/favicon.ico|/icons/*|api/auth/token/refresh|api/auth/refresh-token|.*\\.(?:svg|png|jpg|jpeg|gif|webp|css|js)$).*)',
     ],
 };

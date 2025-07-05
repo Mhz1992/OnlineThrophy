@@ -3,8 +3,8 @@ import type {Metadata, Viewport} from "next";
 import "./globals.css";
 import {Providers} from './providers';
 
-const APP_NAME = "مشاور آنلاین";
-const APP_DEFAULT_TITLE = `اپلیکیشن ${APP_NAME}`;
+const APP_NAME = "MindfullSex";
+const APP_DEFAULT_TITLE = `MindfullSex`;
 const APP_TITLE_TEMPLATE = `%s - ${APP_NAME}`;
 const APP_DESCRIPTION = APP_DEFAULT_TITLE;
 
@@ -12,7 +12,7 @@ export const viewport: Viewport = {
     initialScale: 1,
     maximumScale: 1,
     width: "device-width",
-    themeColor: "#00A86B",
+    themeColor: "#bcd2e9",
 };
 export const metadata: Metadata = {
     manifest: "/manifest.json",
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     },
 };
 
- const dana = localFont({
+const dana = localFont({
     src: './fonts/DanaVF.woff2',
     variable: '--font-yekan-sans',
     weight: '100 900',
@@ -68,7 +68,27 @@ export default function RootLayout({
     children: React.ReactNode;
 }>) {
     return (
-        <html lang="fa" className={`${dana.variable} ss02 h-full text-foreground mx-auto max-w-3xl `} suppressHydrationWarning>
+        <html lang="fa" className={`${dana.variable} ss02 h-full text-foreground mx-auto max-w-3xl `}
+              suppressHydrationWarning>
+        <head>
+            <link rel="apple-touch-icon" sizes="57x57" href="/icons/apple-icon-57x57.png"/>
+            <link rel="apple-touch-icon" sizes="60x60" href="/icons/apple-icon-60x60.png"/>
+            <link rel="apple-touch-icon" sizes="72x72" href="/icons/apple-icon-72x72.png"/>
+            <link rel="apple-touch-icon" sizes="76x76" href="/icons/apple-icon-76x76.png"/>
+            <link rel="apple-touch-icon" sizes="114x114" href="/icons/apple-icon-114x114.png"/>
+            <link rel="apple-touch-icon" sizes="120x120" href="/icons/apple-icon-120x120.png"/>
+            <link rel="apple-touch-icon" sizes="144x144" href="/icons/apple-icon-144x144.png"/>
+            <link rel="apple-touch-icon" sizes="152x152" href="/icons/apple-icon-152x152.png"/>
+            <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-icon-180x180.png"/>
+            <link rel="icon" type="image/png" sizes="192x192" href="/icons/android-icon-192x192.png"/>
+            <link rel="icon" type="image/png" sizes="32x32" href="/icons/favicon-32x32.png"/>
+            <link rel="icon" type="image/png" sizes="96x96" href="/icons/favicon-96x96.png"/>
+            <link rel="icon" type="image/png" sizes="16x16" href="/icons/favicon-16x16.png"/>
+            <link rel="manifest" href="/manifest.json"/>
+            <meta name="msapplication-TileColor" content="#ffffff"/>
+            <meta name="msapplication-TileImage" content="/icons/ms-icon-144x144.png"/>
+            <meta name="theme-color" content="#ffffff"/>
+        </head>
         <body className="h-full ">
         {/*
             The main content wrapper.
