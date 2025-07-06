@@ -8,8 +8,6 @@ const publicPaths = [
     '/register',
     '/forgot-password',
     '/api/auth/forgot-password',
-    '/api/backend/auth/signup',
-    '/api/backend/auth/login',
     '/api/auth/token/refresh', // Backend refresh endpoint
     '/api/auth/refresh-token' // New Next.js API route for refreshing cookies
 ];

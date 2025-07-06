@@ -93,7 +93,6 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
             // If we get a 401 and we're not already trying to refresh the token, attempt to refresh
             if (response.status === 401) {
                 try {
-                    console.log("Attempting to refresh token via server-side endpoint...");
                     // Call the new server-side refresh endpoint
                     const refreshResponse = await fetch(`${origin}/api/auth/refresh-token`, {
                         method: 'POST',
@@ -109,7 +108,6 @@ export async function apiClient<T>(url: string, options: ApiClientOptions = {}):
                         throw new AuthError(errorMessage || 'Authentication failed or forbidden', response.status);
                     }
 
-                    console.log("Token refreshed successfully. Retrying original request.");
                     // Retry the original request with the new token (cookies will be sent automatically)
                     return apiClient<T>(url, {
                         ...options,

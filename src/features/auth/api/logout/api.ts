@@ -1,11 +1,18 @@
-import {apiClient} from "@/lib/apiClient";
-import { LogoutRequest } from "./types"; // Import LogoutResponse
+import {NextResponse} from "next/server";
 
-export const logoutUserApi = async (data: LogoutRequest): Promise<void> => { // Explicitly type return as Promise<void>
-    // Call apiClient directly and pass method in options
-    await apiClient<LogoutRequest>('/api/auth/logout/', { // Use LogoutResponse and await the call
+export const logoutUserApi = async (): Promise<Response> => {
+
+    const logoutResponse = await fetch(`${origin}/api/auth/logout-user`, {
         method: 'POST',
-        body: data // Pass the 'data' object directly, which contains { refresh: "your_token_string" }
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Ensure cookies are sent for refresh request
     });
-    // No explicit return needed as the function is typed to return Promise<void>
+    if (!logoutResponse.ok) {
+        console.error('Server-side logout-user failed:', logoutResponse.status);
+        return NextResponse.json({message: 'Internal server error during logout-user'}, {status: logoutResponse.status});
+    }
+    return NextResponse.json({message: 'Success logout-user'}, {status: logoutResponse.status});
+
 };

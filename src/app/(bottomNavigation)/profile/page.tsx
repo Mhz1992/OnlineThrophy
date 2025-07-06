@@ -22,7 +22,7 @@ export default function ProfilePage() {
 
     const SUPPORT_PHONE_NUMBER = '02112345678'; // Example support phone number
 
-    // Initialize the logout mutation
+    // Initialize the logout-user mutation
     const logoutMutation = useLogoutMutation({
         onSettled: () => {
             setLoadingLogout(false);
@@ -36,11 +36,7 @@ export default function ProfilePage() {
 
     const handleConfirmLogout = () => {
         setLoadingLogout(true);
-        // Call the logout API
-        const refreshToken =  localStorage.getItem("refreshToken")
-        if (refreshToken){
-            logoutMutation.mutate({refresh:refreshToken});
-        }
+        logoutMutation.mutate();
 
     };
 
@@ -124,7 +120,7 @@ export default function ProfilePage() {
                                 onClick={item.onClick}
                                 className={cn(
                                     "flex items-center justify-between p-4 w-full",
-                                    idx === profileItems.length -1 ? "" : " border-b rounded border-gray-200 dark:border-gray-700",
+                                    idx === profileItems.length - 1 ? "" : " border-b rounded border-gray-200 dark:border-gray-700",
                                     "hover:bg-accent hover:text-accent-foreground transition-colors cursor-pointer"
                                 )}>
                                 <span className="text-lg font-medium">{item.title}</span>
@@ -133,7 +129,7 @@ export default function ProfilePage() {
                                 <div
                                     key={item.id}
                                     className={cn("w-full p-4 flex items-center justify-between ",
-                                        idx === profileItems.length -1 ? "" : " border-b border-gray-200 dark:border-gray-700")}>
+                                        idx === profileItems.length - 1 ? "" : " border-b border-gray-200 dark:border-gray-700")}>
                                     <Label htmlFor="notifications-toggle" className="text-lg font-medium cursor-pointer">
                                         {item.title}
                                     </Label>

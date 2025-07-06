@@ -13,10 +13,9 @@ interface UseLogoutMutationOptions {
 export const useLogoutMutation = (options?: UseLogoutMutationOptions) => {
     const router = useRouter();
 
-    return useMutation<void, Error, LogoutRequest>({
+    return useMutation({
         mutationFn: logoutUserApi,
         onSuccess: async () => {
-
                 toast.success('خروج موفقیت‌آمیز بود!');
                 router.push('/login');
         },
