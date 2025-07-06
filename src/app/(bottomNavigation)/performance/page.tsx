@@ -1,28 +1,27 @@
 'use client';
 
-import React, {useEffect, useState} from 'react';
+import React from 'react';
 import {Card, CardContent, CardHeader} from '@/components/ui/card';
 import {Skeleton} from '@/components/skeleton';
 import {PerformanceCard} from '@/features/performance/components/PerformanceCard';
 import {
-    Chart as ChartJS,
     CategoryScale,
+    Chart as ChartJS,
+    CoreScaleOptions,
+    Legend,
     LinearScale,
-    PointElement,
     LineElement,
+    PointElement,
+    Scale,
+    ScriptableContext,
     Title,
     Tooltip as ChartJSTooltip,
-    Legend,
     TooltipItem,
-    ScriptableContext,
-    Scale,
-    CoreScaleOptions,
 } from 'chart.js';
 import {Line} from 'react-chartjs-2';
 import {danaFont} from "@/lib/utils";
 import {usePerformanceQuery} from "@/features/performance/api/hooks";
 import {getPersianDate} from "@/core/utils/getPersianDate";
-import {useTheme} from 'next-themes'; // Import useTheme
 
 // Register Chart.js components
 ChartJS.register(

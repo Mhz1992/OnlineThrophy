@@ -1,5 +1,4 @@
 import {BookOpenIcon} from "@/features/common/assets/svg";
-import {cn} from "@/lib/utils";
 import {SessionListSkeleton} from "@/features/skeleton/SessionListSkeleton";
 import {TherapySessionCard} from "@/features/home/components/TheraphySessionCard";
 import React from "react";
