@@ -5,12 +5,15 @@ export async function POST(request: NextRequest) {
     const cookieStore = await cookies()
     const refreshToken = cookieStore.get('refresh_token')?.value
     if (!refreshToken) {
-        return NextResponse.redirect(new URL('/login', request.url));
+        const response = NextResponse.redirect(new URL('/login', request.url));
+        response.cookies.delete('access_token');
+        response.cookies.delete('refresh_token');
+        return response;
     }
 
     try {
         const baseUrl = process.env.NEXT_PUBLIC_URL;
-        const refreshResponse =  await fetch(`${baseUrl}/api/auth/token/refresh/`, {
+        const refreshResponse = await fetch(`${baseUrl}/api/auth/token/refresh/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
@@ -18,10 +21,7 @@ export async function POST(request: NextRequest) {
             body: JSON.stringify({refresh: refreshToken}),
         });
         if (!refreshResponse.ok) {
-            const response = NextResponse.redirect(new URL('/login', request.url));
-            response.cookies.delete('access_token');
-            response.cookies.delete('refresh_token');
-            return response;
+            return NextResponse.redirect(new URL('/login', request.url));
         }
         return refreshResponse;
 

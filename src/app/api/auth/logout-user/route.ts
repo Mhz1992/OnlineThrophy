@@ -17,22 +17,14 @@ export async function POST(request: NextRequest) {
 
     try {
         const baseUrl = process.env.NEXT_PUBLIC_URL;
-        const logoutResponse = await fetch(`${baseUrl}/api/auth/logout/`, {
+        return await fetch(`${baseUrl}/api/auth/logout/`, {
             method: 'POST',
+            body: JSON.stringify({refresh: refreshToken}),
             headers: {
                 'Content-Type': 'application/json',
-                // Send the access token as a Cookie header to the backend
-                'Cookie': `access_token=${accessToken}`,
-            },
-            body: JSON.stringify({refresh: refreshToken}),
+                'Authorization': `Bearer ${accessToken}`
+            }
         });
-        if (logoutResponse.status === 204) {
-            const response = NextResponse.redirect(new URL('/login', request.url));
-            response.cookies.delete('access_token');
-            response.cookies.delete('refresh_token');
-            return response;
-        }
-        return logoutResponse;
 
     } catch (error) {
         console.error('Error during logout:', error);
