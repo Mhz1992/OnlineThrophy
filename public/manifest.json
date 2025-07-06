@@ -1,7 +1,7 @@
 {
-  "name": "Mindfull Sex",
-  "short_name": "Mindfull Sex",
-  "description": "An application for Mindfull Sex",
+  "name": "MindfulSex",
+  "short_name": "MindfulSex",
+  "description": "An application for MindfulSex",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",

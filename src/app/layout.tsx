@@ -3,8 +3,8 @@ import type {Metadata, Viewport} from "next";
 import "./globals.css";
 import {Providers} from './providers';
 
-const APP_NAME = "MindfullSex";
-const APP_DEFAULT_TITLE = `MindfullSex`;
+const APP_NAME = "MindfulSex";
+const APP_DEFAULT_TITLE = `MindfulSex`;
 const APP_TITLE_TEMPLATE = `%s - ${APP_NAME}`;
 const APP_DESCRIPTION = APP_DEFAULT_TITLE;
 
