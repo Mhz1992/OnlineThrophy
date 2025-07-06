@@ -63,6 +63,11 @@
       "type": "image/png"
     },
     {
+      "src": "/icons/apple-icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
       "src": "/icons/icon-192x192.png",
       "sizes": "192x192",
       "type": "image/png"
