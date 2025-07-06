@@ -131,14 +131,18 @@ export const SessionContentDisplay: React.FC<{ media: SessionMedia[] }> = ({medi
                                 <h2 className={cn("text-lg font-bold mb-4 text-right w-full text-primary")}>{content.title}</h2>
                             )}
                             <div className="relative w-full" style={{paddingBottom: '56.25%'}}>
-                                <iframe
-                                    className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"
-                                    src={content.value + (content.value.includes('?') ? '&' : '?') + 'autoplay=0'} // Disable autoplay
-                                    title={content.title || "Session Video"}
-                                    frameBorder="0"
-                                    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // Removed autoplay from allow
-                                    allowFullScreen
-                                ></iframe>
+                                <video controls width="100%" preload="metadata">
+                                    <source src={content.value } type="video/mp4" />
+                                    Your browser does not support the video tag.
+                                </video>
+                                {/*<iframe*/}
+                                {/*    className="absolute top-0 left-0 w-full h-full rounded-lg shadow-lg"*/}
+                                {/*    src={content.value + (content.value.includes('?') ? '&' : '?') + 'autoplay=0'} // Disable autoplay*/}
+                                {/*    title={content.title || "Session Video"}*/}
+                                {/*    frameBorder="0"*/}
+                                {/*    allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture" // Removed autoplay from allow*/}
+                                {/*    allowFullScreen*/}
+                                {/*></iframe>*/}
                             </div>
                         </div>
                     )}
